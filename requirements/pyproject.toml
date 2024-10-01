@@ -13,6 +13,7 @@ pydantic = "^2.9.2"
 fastapi-users = "^13.0.0"
 alembic = "^1.13.3"
 sqlalchemy = "^2.0.35"
+psycopg2 = "^2.9.9"
 
 
 [build-system]
