@@ -10,4 +10,4 @@
 *.xml
 *.iml
 *.lock
-*.env
+.env/
