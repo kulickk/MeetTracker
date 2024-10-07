@@ -7,12 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.115.0"
+fastapi = {extras = ["uvicorn"], version = "^0.115.0"}
 SQLAlchemy = "^2.0.35"
 asyncpg = "^0.29.0"
-pydantic = "^2.9.2"
+pydantic = {extras = ["email"], version = "^2.9.2"}
 alembic = "^1.13.3"
 psycopg2 = "^2.9.9"
+passlib = "^1.7.4"
+bcrypt = "4.0.1"
 
 
 [build-system]
