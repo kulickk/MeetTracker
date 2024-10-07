@@ -20,8 +20,8 @@ user = Table(
 file = Table(
     "file",
     metadata,
-    Column("id", Integer, primary_key=True),
-    Column("user_id", Integer, ForeignKey(user.c.id), nullable=False),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("user_id", Integer, ForeignKey('user.id'), nullable=False),
     Column("file_name", String, nullable=False),
     Column("file_path", String, nullable=False),
     Column("uploaded_at", TIMESTAMP, default=datetime.utcnow),
@@ -36,8 +36,8 @@ file = Table(
 summary = Table(
     "summary",
     metadata,
-    Column("id", Integer, primary_key=True),
-    Column("file_id", Integer, ForeignKey(file.c.id), unique=True, nullable=False),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("file_id", Integer, ForeignKey('file.id'), unique=True, nullable=False),
     Column("summary_text", String, nullable=False),
     Column("created_at", TIMESTAMP, default=datetime.utcnow),
     Column("uploaded_at", TIMESTAMP, default=datetime.utcnow)
