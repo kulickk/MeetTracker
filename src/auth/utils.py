@@ -26,7 +26,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def create_user(username: str, email: str, password: str, db_session: AsyncSession) -> dict[str, Any]:
+async def create_user(username: str, email: str, password: str, db_session: AsyncSession) -> dict[str, str]:
     result = await db_session.execute(select(DB_User).where(email == DB_User.email))
     existing_email_user = result.scalars().first()
     if existing_email_user:
@@ -97,7 +97,7 @@ async def get_user_by_username(username: str, db: AsyncSession) -> Optional[DB_U
     return result.scalars().first()
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> dict[str, Any]:
     payload = verify_token(token)
     email: str = payload.get("sub")
     if email is None:
