@@ -1,9 +1,8 @@
-from pydantic import BaseModel, Field, EmailStr, validator
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
-import re
 
 
-class UserBase(BaseModel):
+class UserBaseSchema(BaseModel):
     username: str = Field(
         ...,
         min_length=5,
@@ -14,14 +13,22 @@ class UserBase(BaseModel):
     email: EmailStr
 
 
-class UserCreate(UserBase):
+class UserLoginSchema(BaseModel):
+    identifier: str
     password: str = Field(
         ...,
         min_length=8,
     )
 
 
-class UserRead(UserBase):
+class UserCreateSchema(UserBaseSchema):
+    password: str = Field(
+        ...,
+        min_length=8,
+    )
+
+
+class UserReadSchema(UserBaseSchema):
     id: int
     is_active: bool
     is_admin: bool
@@ -38,4 +45,8 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: str | None = None
+
+
+class ErrorResponse(BaseModel):
+    detail: str
