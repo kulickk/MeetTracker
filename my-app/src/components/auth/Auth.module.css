@@ -1,0 +1,77 @@
+.switcher {
+    height: 64px;
+    background-color: #353535;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    width: 390px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 0px 40px 0px #00000040;
+}
+
+.form {
+    height: auto;
+    width: 523px;
+}
+
+.registration, .login {
+    display: flex;
+    background-color: #353535;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+    border-radius: 26px;
+    box-shadow: 0px 0px 40px 0px #00000040;
+}
+
+button {
+    height: 44px;
+    border: unset;
+    background: #F59D0E;
+    border-radius: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    width: 443px;
+    height: 40px;
+}
+
+label p {
+    font-size: 24px;
+    line-height: 29.26px;
+    text-align: center;
+    display: block;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: #FFFFFF;
+}
+
+.login {
+    height: 224px;
+}
+
+.registration {
+    height: 289px;
+}
+
+.formData input {
+    outline: none;
+    border: unset;
+    width: 300px;
+    padding: 0;
+    padding-block: 0;
+    padding-inline: 0;
+    background: #282828;
+    border-radius: 14px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.active {
+    display: flex;
+}
