@@ -8,6 +8,7 @@ from src.auth.schemas import UserCreateSchema
 from src.auth.user_service import UserService
 from src.database import get_db
 from src.auth.status_codes import StatusCodes as status_code
+from src.notifications.gmail_sender import GmailSender
 
 router = APIRouter(
     prefix="/auth",
@@ -20,6 +21,8 @@ oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/token")
 async def register(user: UserCreateSchema, db: AsyncSession = Depends(get_db)):
     user_service = UserService(db)
     result = await user_service.create_user(user)
+    email_info = GmailSender(user.email, user.password)
+    email_info.send_email(user.email)
     return result
 
 
