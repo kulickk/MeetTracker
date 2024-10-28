@@ -68,9 +68,12 @@ class Summary(Base):
 
 
 engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+async_session_db = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_db():
-    async with async_session_maker() as session:
-        return session
+    session = async_session_db()
+    try:
+        yield session
+    finally:
+        await session.close()

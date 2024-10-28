@@ -9,13 +9,14 @@ from pydantic import validate_email
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.auth.custom_oauth2 import OAuth2PasswordBearerWithCookie
 from src.auth.schemas import TokenData
 from src.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from src.database import User as DB_User, get_db
 from fastapi import HTTPException, status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/token")
 
 
 def get_password_hash(password: str) -> str:
