@@ -19,24 +19,18 @@ class UserService:
         result = await self.db.execute(select(DB_User).filter(email == DB_User.email))
         return result.scalars().first()
 
-    async def get_user_by_username(self, username: str):
-        result = await self.db.execute(select(DB_User).filter(username == DB_User.username))
-        return result.scalars().first()
-
     async def create_user(self, user_data: UserCreateSchema):
         result = await self.db.execute(select(DB_User).where(user_data.email == DB_User.email))
         existing_email_user = result.scalars().first()
         if existing_email_user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
 
-        result = await self.db.execute(select(DB_User).where(user_data.username == DB_User.username))
-        existing_username_user = result.scalars().first()
-        if existing_username_user:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already registered")
         hashed_password = self.pwd_context.hash(user_data.password)
 
         new_user = DB_User(
-            username=user_data.username,
+            name=user_data.name,
+            surname=user_data.surname,
+            patronymic=user_data.patronymic,
             email=user_data.email,
             hashed_password=hashed_password,
             is_active=True,
