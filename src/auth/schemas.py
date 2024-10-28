@@ -3,22 +3,28 @@ from typing import Optional
 
 
 class UserBaseSchema(BaseModel):
-    username: str = Field(
+    name: str = Field(
         ...,
-        min_length=5,
+        min_length=2,
         max_length=20,
-        pattern=r'^[A-Za-z0-9_]+$',
-        description="Имя пользователя должно содержать только буквы, цифры и подчеркивания."
+        pattern=r'^[А-ЯЁ][а-яё]+$',
+        description="Имя пользователя должно содержать только русские буквы."
+    )
+    surname: str = Field(
+        ...,
+        min_length=2,
+        max_length=20,
+        pattern=r'^[А-ЯЁ][а-яё]+$',
+        description="Имя пользователя должно содержать только русские буквы."
+    )
+    patronymic: str = Field(
+        ...,
+        min_length=2,
+        max_length=20,
+        pattern=r'^^[А-ЯЁ][а-яё]+$',
+        description="Имя пользователя должно содержать только русские буквы."
     )
     email: EmailStr
-
-
-class UserLoginSchema(BaseModel):
-    identifier: str
-    password: str = Field(
-        ...,
-        min_length=8,
-    )
 
 
 class UserCreateSchema(UserBaseSchema):
