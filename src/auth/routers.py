@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,6 +26,16 @@ async def register(user: UserCreateSchema, db: AsyncSession = Depends(get_db)):
     return result
 
 
+@router.post("/register-admin", responses=status_code.register)
+async def register_admin(user: UserCreateSchema, token: str = Depends(oauth2_scheme),
+                         db: AsyncSession = Depends(get_db)):
+    auth_service = AuthService(db)
+    current_user = await auth_service.get_current_user(token)
+    if not current_user['is_admin']:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='You are not an admin')
+    return await register(user, db)
+
+
 @router.post("/token", responses=status_code.login)
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
                                  db: AsyncSession = Depends(get_db)):
@@ -40,6 +50,11 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
             "access_token": access_token,
             'token_type': 'Bearer'
         }
+
+
+# @router.post("/change-password", responses=status_code.login)
+# async def change_password(user: UserCreateSchema, )
+#
 
 
 @router.get("/users/me", responses=status_code.read_user_info)

@@ -14,7 +14,7 @@ class GmailSender:
         Ваш пароль для входа:{user_password}\n
         """
 
-    def send_email(self, recipient):
+    def send_email(self, recipient: str):
         msg = MIMEText(self.msg)
         msg['Subject'] = self.subject
         msg['From'] = self.sender
