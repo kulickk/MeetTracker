@@ -35,6 +35,7 @@ class UserService:
             hashed_password=hashed_password,
             is_active=True,
             is_admin=False,
+            is_banned=False,
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow()
         )
@@ -47,3 +48,16 @@ class UserService:
             "status_code": "200",
             "detail": "Successfully registered"
         }
+
+    async def check_user_ban(self, email: str):
+        user = await self.get_user_by_email(email)
+        if user is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Email not found')
+        print(user.is_banned)
+        return user.is_banned
+
+    async def check_user_admin(self, email: str):
+        user = await self.get_user_by_email(email)
+        if user is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Email not found')
+        return user.is_admin

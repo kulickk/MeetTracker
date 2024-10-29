@@ -34,10 +34,22 @@ class UserCreateSchema(UserBaseSchema):
     )
 
 
+class UserChangePasswordSchema(BaseModel):
+    old_password: str = Field(
+        ...,
+        min_length=8,
+    )
+    new_password: str = Field(
+        ...,
+        min_length=8,
+    )
+
+
 class UserReadSchema(UserBaseSchema):
     id: int
     is_active: bool
     is_admin: bool
+    is_banned: bool
     created_at: Optional[str]
     updated_at: Optional[str]
 
