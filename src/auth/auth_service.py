@@ -7,6 +7,7 @@ from fastapi import Request, HTTPException, status
 from src.auth.user_service import UserService
 from src.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from src.database import User as DB_User
+from sqlalchemy import update
 
 
 class AuthService:
@@ -60,8 +61,27 @@ class AuthService:
                 "id": user.id,
                 "is_active": user.is_active,
                 "is_admin": user.is_admin,
+                "is_banned": user.is_banned,
                 "created_at": user.created_at,
                 "updated_at": user.updated_at,
             }
         except PyJWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+    async def change_password(self, old_password: str, new_password: str, email: str):
+        user: DB_User = await self.authenticate_user(email=email, password=old_password)
+        new_hashed_password = self.user_service.pwd_context.hash(new_password)
+        update_password = (
+            update(DB_User)
+            .where(user.email == DB_User.email)
+            .values(hashed_password=new_hashed_password)
+        )
+        update_time = (
+            update(DB_User)
+            .where(user.email == DB_User.email)
+            .values(updated_at=datetime.utcnow())
+        )
+        await self.db.execute(update_password)
+        await self.db.execute(update_time)
+        await self.db.commit()
+        return {"status": "success"}

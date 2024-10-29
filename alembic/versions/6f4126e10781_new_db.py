@@ -28,6 +28,7 @@ def upgrade() -> None:
                     sa.Column('hashed_password', sa.String(), nullable=False),
                     sa.Column('is_active', sa.Boolean(), nullable=True),
                     sa.Column('is_admin', sa.Boolean(), nullable=True),
+                    sa.Column('is_banned', sa.Boolean(), nullable=True),
                     sa.Column('created_at', sa.TIMESTAMP(), nullable=True),
                     sa.Column('updated_at', sa.TIMESTAMP(), nullable=True),
                     sa.PrimaryKeyConstraint('id'),

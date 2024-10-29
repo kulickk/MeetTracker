@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, Response, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth import user_service
 from src.auth.auth_service import AuthService
 from src.auth.custom_oauth2 import OAuth2PasswordBearerWithCookie
-from src.auth.schemas import UserCreateSchema
+from src.auth.schemas import UserCreateSchema, UserChangePasswordSchema
 from src.auth.user_service import UserService
 from src.database import get_db
 from src.auth.status_codes import StatusCodes as status_code
@@ -14,26 +15,16 @@ router = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearerWithCookie(token="auth/token")
 
 
 @router.post("/register", responses=status_code.register)
 async def register(user: UserCreateSchema, db: AsyncSession = Depends(get_db)):
     user_service = UserService(db)
     result = await user_service.create_user(user)
-    email_info = GmailSender(user.email, user.password)
-    email_info.send_email(user.email)
+    # email_info = GmailSender(user.email, user.password)
+    # email_info.send_email(user.email)
     return result
-
-
-@router.post("/register-admin", responses=status_code.register)
-async def register_admin(user: UserCreateSchema, token: str = Depends(oauth2_scheme),
-                         db: AsyncSession = Depends(get_db)):
-    auth_service = AuthService(db)
-    current_user = await auth_service.get_current_user(token)
-    if not current_user['is_admin']:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='You are not an admin')
-    return await register(user, db)
 
 
 @router.post("/token", responses=status_code.login)
@@ -52,9 +43,14 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
         }
 
 
-# @router.post("/change-password", responses=status_code.login)
-# async def change_password(user: UserCreateSchema, )
-#
+@router.post("/change-password")
+async def change_password(data: UserChangePasswordSchema, token: str = Depends(oauth2_scheme),
+                          db: AsyncSession = Depends(get_db)):
+    user = await read_users_me(token=token, db=db)
+    if user:
+        auth_service = AuthService(db)
+        result = await auth_service.change_password(data.old_password, data.new_password, user['email'])
+        return result
 
 
 @router.get("/users/me", responses=status_code.read_user_info)
