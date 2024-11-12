@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "babel-preset-react-app": "^10.0.1",
     "classnames": "^2.5.1"
   }
 }

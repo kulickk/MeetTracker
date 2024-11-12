@@ -1,114 +1,115 @@
 import { React, useState } from "react";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useNavigate, Navigate } from "react-router-dom";
 import classNames from "classnames";
 import styles from './Auth.module.css'
 import api from "../../api";
 import routing from "../../routing";
 
-const AuthForm = (props) => {
-    // console.log('Пропсы AuthForm', props.loginForm.login);
-    if (props.isChecked) {
-        return (
-            // Login
-            <div id='loginAuth' className={ styles.login }>
-                <label htmlFor="">
-                    <p>Логин</p>
-                    <input id="login-input-login" onChange={props.loginForm.login.onChangeLogin} type="login" placeholder="Введите логин..." />
-                </label>
-                <label htmlFor="">
-                    <p>Пароль</p>
-                    <input id="login-input-password" onChange={props.loginForm.pass.onChangePassword} type="password" placeholder="Введите пароль..." />
-                </label>
-                <button onClick={ props.handleLogIn }><Link to={ routing.index }>Войти</Link></button>
-            </div>
-        );
-    }
-    else {
-        return (
-            // Registration
-            <div className={ classNames(styles.registration, styles.active ) }>
-                <label htmlFor="">
-                    <p>Имя</p>
-                    <input  type="login" onChange={props.loginForm.nickname.onChangeNickname} placeholder="Введите имя..." />
-                </label>
-                <label htmlFor="">
-                    <p>Почта</p>
-                    <input type="email" onChange={props.loginForm.login.onChangeLogin} placeholder="Введите почту..." />
-                </label>
-                <label htmlFor="">
-                    <p>Пароль</p>
-                    <input type="password" onChange={props.loginForm.pass.onChangePassword} placeholder="Введите пароль..." />
-                </label>
-                <button onClick={ props.handleRegistration } >Зарегистрироваться</button>
-            </div>
-        );
-    }
-};
-
-const isRegister = (isReg) => (!isReg) ? 'Регистрация' : 'Вход'
-
 const Auth = (props) => {
-    const [checkbox, setCheckBox] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const navigate = useNavigate();
+    const [logIn, setLogIn] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [password, setPassword] = useState('');
 
-    // const handleRegistration = () => {
-    //     setIsSending(true);
-    //     const data = {
-    //         username: "LOX",
-    //         email: "user@example.com",
-    //         password: "password123"
-    //     };
-    //     const response = fetch(api.register, {
-    //         method: 'POST',
-    //         mode: 'no-cors',
-    //         body: JSON.stringify(data),
-    //         headers: {
-    //             'Content-Type': 'application-json',
-    //             'Accept': 'application/json'
-    //         }
-    //     })
-    //     setIsSending(false);
-    // };
+    const onChangeLogin = e => {
+        setLogIn(e.target.value);
+        console.log('Логин', e.target.value);
+      };
+    
+      const onChangePassword = e => {
+        setPassword(e.target.value);
+        console.log('Пароль', e.target.value);
+      };
+    
+      const onChangeNickname = e => {
+        setNickname(e.target.value);
+        console.log('Никнейм', e.target.value);
+      };
+
+    const handleLogIn = e => {
+        e.preventDefault();
+        fetch(api.logIn, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+            'grant_type': 'password',
+            'username': 'user@example.com',
+            'password': '123123123',
+            'scope': '',
+            'client_id': 'string',
+            'client_secret': 'string'
+          })});
+        navigate(routing.index);
+      };
+    
+    const handleRegistration = e => {
+        e.preventDefault();
+        let [surname, name, patronymic] = nickname.split(' ');
+        fetch(api.register, {
+            method: 'POST',
+            headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: name, surname: surname, patronymic: patronymic, email: logIn, password: password})
+        });
+    };
 
     return (
         <div className={ styles.form }>
             {/* Swicher */}
             <div className={ styles.switcher }>
-                <label htmlFor="">
-                    <input type="checkbox" onClick={ () => {
-                        setCheckBox(!checkbox);
-                    } } value={false} />
-                    <label htmlFor="">{ isRegister(checkbox) }</label>
+                <label >
+                    <input id="switcher" type="checkbox"
+                    onClick={ (e) => {
+                        let labelSwitcher = document.getElementById('switcher-label');
+                        let registrationForm = document.querySelector(`.${styles.registration}`);
+                        let loginForm = document.querySelector(`.${styles.login}`);
+                        loginForm.classList.toggle(styles.active);
+                        registrationForm.classList.toggle(styles.active);
+                        console.log(e.target.checked);
+                        if (e.target.checked) {
+                            labelSwitcher.textContent = 'Регистрация';
+                        }
+                        else {
+                            labelSwitcher.textContent = 'Вход';
+                        }
+                    }} />
+                    <label id="switcher-label">Вход</label>
                 </label>
             </div>
             <div className={ styles.formData }>
-                <AuthForm isChecked={ checkbox } handleLogIn={ props.handleLogIn } handleRegistration={ props.handleRegistration } user={ props.user } loginForm={ props.loginForm } />
-                {/* <div className={ classNames(styles.registration, styles.active ) }>
-                    <label htmlFor="">
+                <form className={ styles.registration }>
+                    <label htmlFor="registration-login">
                         <p>Имя</p>
-                        <input type="login" placeholder="Введите имя..." />
+                        <input id="registration-login" type="login" placeholder="Введите имя..." onChange={ onChangeNickname } />
                     </label>
                     <label htmlFor="">
                         <p>Пароль</p>
-                        <input type="password" placeholder="Введите пароль..." />
+                        <input id="registration-password" type="password" placeholder="Введите пароль..." onChange={ onChangePassword } />
                     </label>
                     <label htmlFor="">
                         <p>Почта</p>
-                        <input type="email" placeholder="Введите почту..." />
+                        <input id="registration-email" type="email" placeholder="Введите почту..." onChange={ onChangeLogin } />
                     </label>
-                    <button>Зарегистрироваться</button>
-                </div>
-                <div className={ styles.login }>
-                    <label htmlFor="">
+                    <button onClick={ handleRegistration }>Зарегистрироваться</button>
+                </form>
+                <form className={ classNames(styles.login, styles.active) }>
+                    <label htmlFor="login-login">
                         <p>Логин</p>
-                        <input type="login" />
+                        <input id="login-login" type="login" />
                     </label>
-                    <label htmlFor="">
+                    <label htmlFor="login-password">
                         <p>Пароль</p>
-                        <input type="password" />
+                        <input id="login-password" type="password" />
                     </label>
-                    <button>Войти</button>
-                </div> */}
+                    <button onClick={ handleLogIn }>Войти</button>
+                </form>
             </div>
         </div>
     );
