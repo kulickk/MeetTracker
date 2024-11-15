@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Integer, String, Boolean, TIMESTAMP, ForeignKey
+from sqlalchemy import Integer, String, Boolean, TIMESTAMP, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 
 from src.config import DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME
@@ -41,11 +41,9 @@ class File(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), nullable=False)
     file_name: Mapped[str] = mapped_column(String, nullable=False)
     file_path: Mapped[str] = mapped_column(String, nullable=False)
-    uploaded_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
     status: Mapped[str] = mapped_column(String, nullable=False)
-    result_link: Mapped[str] = mapped_column(String)
     file_type: Mapped[str] = mapped_column(String, nullable=False)
-    processed_audio_path: Mapped[str] = mapped_column(String)
+    uploaded_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
     updated_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
 
     owner: Mapped['User'] = relationship(
@@ -61,7 +59,7 @@ class Summary(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     file_id: Mapped[int] = mapped_column(Integer, ForeignKey('file.id'), unique=True, nullable=False)
-    summary_text: Mapped[str] = mapped_column(String, nullable=False)
+    transcription: Mapped[str] = mapped_column(JSON, nullable=False)
     created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
     uploaded_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, default=datetime.utcnow)
 

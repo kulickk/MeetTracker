@@ -18,6 +18,14 @@ bcrypt = "4.0.1"
 pyjwt = "^2.9.0"
 python-multipart = "^0.0.12"
 fastapi-cors = "^0.0.6"
+pydub = "^0.25.1"
+orjson = "^3.10.11"
+faster-whisper = "^1.0.3"
+numpy = "2.0.0"
+torch = "^2.5.1"
+aiobotocore = "^2.15.2"
+aiofiles = "^24.1.0"
+langchain-ollama = "^0.2.0"
 
 
 [build-system]

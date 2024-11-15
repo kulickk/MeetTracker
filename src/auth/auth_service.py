@@ -29,6 +29,14 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
         return token
 
+    @staticmethod
+    async def decode_token(token: str):
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        return email
+
     async def authenticate_user(self, email: str, password: str):
         user: DB_User = await self.user_service.get_user_by_email(email)
         if not user:
