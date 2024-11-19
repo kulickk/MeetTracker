@@ -26,6 +26,7 @@ torch = "^2.5.1"
 aiobotocore = "^2.15.2"
 aiofiles = "^24.1.0"
 langchain-ollama = "^0.2.0"
+librosa = "^0.10.2.post1"
 
 
 [build-system]
