@@ -27,7 +27,7 @@ async def process_audio(file_name: str, file_type: str, token: str = Depends(oau
     async with aiofiles.open(f'files/{file_name}.json', 'w', encoding='utf-8') as f:
         await f.write(data)
 
-    await whisper.add_to_db(token, data)
+    await whisper.add_to_db(token, result)
 
     os.remove(path)
     return {

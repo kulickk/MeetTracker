@@ -1,6 +1,7 @@
 import json
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.routers import oauth2_scheme
@@ -44,3 +45,11 @@ async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: As
         }
 
     return {'status': status}
+
+
+@router.get('/get-user-meets')
+async def get_user_meets(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+    db_service = DatabaseService(db)
+    result = await db_service.get_all_transcription(token)
+    return result
+

@@ -58,3 +58,26 @@ class DatabaseService:
             raise ValueError("Summary not found")
 
         return summary
+
+    async def get_all_summary(self, token: str):
+        user_id = await self.get_user_id(token)
+        query = select(DB_File.id).where(user_id == DB_File.user_id)
+        try:
+            result = await self.db.execute(query)
+            files_ids = [file.id for file in result]
+        except NoResultFound:
+            raise ValueError("Summary not found")
+        return files_ids
+
+    async def get_all_transcription(self, token: str):
+        files_ids = await self.get_all_summary(token)
+        final_result = {}
+        for file_id in files_ids:
+            query = select(DB_Summary.transcription).where(DB_Summary.file_id == file_id)
+            try:
+                result = await self.db.execute(query)
+                transcription = result.scalars().first()
+                final_result[file_id] = transcription
+            except NoResultFound:
+                raise ValueError("Summary not found")
+        return final_result
