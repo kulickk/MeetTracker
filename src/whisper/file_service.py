@@ -56,3 +56,21 @@ class FileService:
 
         await self.db.execute(insert(DB_File).values(new_file))
         await self.db.commit()
+
+    @staticmethod
+    async def prepare_json(data):
+        output_data = [
+            {
+                'text': data['text']
+            }
+        ]
+
+        for segment in data["segments"]:
+            output_data.append({
+                "type": "string",
+                "speaker_id": str(segment["speaker"]),
+                "text": segment["text"],
+                "start_time": str(segment["start"]),
+                "stop_time": str(segment["end"]),
+            })
+        return output_data
