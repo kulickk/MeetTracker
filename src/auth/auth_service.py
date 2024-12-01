@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Dict, Any
 
 import jwt
 from jwt import PyJWTError
@@ -30,14 +31,14 @@ class AuthService:
         return token
 
     @staticmethod
-    async def decode_token(token: str):
+    async def decode_token(token: str) -> str:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         email = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
         return email
 
-    async def authenticate_user(self, email: str, password: str):
+    async def authenticate_user(self, email: str, password: str) -> DB_User:
         user: DB_User = await self.user_service.get_user_by_email(email)
         if not user:
             raise HTTPException(
@@ -52,7 +53,7 @@ class AuthService:
             )
         return user
 
-    async def get_current_user(self, token: str):
+    async def get_current_user(self, token: str) -> Dict[str, Any]:
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
             email = payload.get("sub")
@@ -76,7 +77,7 @@ class AuthService:
         except PyJWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-    async def change_password(self, old_password: str, new_password: str, email: str):
+    async def change_password(self, old_password: str, new_password: str, email: str) -> Dict[str, str]:
         user: DB_User = await self.authenticate_user(email=email, password=old_password)
         new_hashed_password = self.user_service.pwd_context.hash(new_password)
         update_password = (

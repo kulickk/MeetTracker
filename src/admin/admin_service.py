@@ -1,3 +1,5 @@
+from typing import List, Dict, Any
+
 from src.auth.auth_service import AuthService
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
@@ -12,7 +14,7 @@ class AdminService:
         self.user_service = UserService(db)
         self.auth_service = AuthService(db)
 
-    async def get_all_users(self):
+    async def get_all_users(self) -> List[Dict[str, Any]]:
         stmt = await self.db.execute(select(DB_User))
         users = stmt.scalars().all()
 
@@ -30,13 +32,13 @@ class AdminService:
         ]
         return users_array
 
-    async def check_admin(self, token: str):
+    async def check_admin(self, token: str) -> bool:
         current_user = await self.auth_service.get_current_user(token)
         if not current_user['is_admin']:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='You are not an admin')
         return True
 
-    async def ban_user(self, email: str):
+    async def ban_user(self, email: str) -> Dict[str, str]:
         if await self.user_service.check_user_admin(email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You can't ban an admin")
         if await self.user_service.check_user_ban(email):
@@ -50,7 +52,7 @@ class AdminService:
         await self.db.commit()
         return {"status": "success"}
 
-    async def unban_user(self, email: str):
+    async def unban_user(self, email: str) -> Dict[str, str]:
         if not await self.user_service.check_user_ban(email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User not banned')
         unban_user = (
@@ -62,7 +64,7 @@ class AdminService:
         await self.db.commit()
         return {"status": "success"}
 
-    async def set_admin(self, email: str):
+    async def set_admin(self, email: str) -> Dict[str, str]:
         if await self.user_service.check_user_admin(email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User already admin')
         if await self.user_service.check_user_ban(email):
