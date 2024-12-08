@@ -20,12 +20,6 @@ class WhisperService:
         self.db_service = DatabaseService(db)
 
     async def run(self):
-        # try:
-        #     processor = AudioProcessor(file_path=self.file_path, device=self.device, model_name=self.model_name)
-        #     return await asyncio.to_thread(processor.process)
-        # except Exception as e:
-        #     processor = AudioProcessor(file_path=self.file_path, device='cpu', model_name=self.model_name)
-        #     return await asyncio.to_thread(processor.process)
         processor = AudioProcessor(file_path=self.file_path, device=self.device, model_name=self.model_name)
         return await asyncio.to_thread(processor.process)
 
