@@ -1,29 +1,27 @@
+import io
 import os
 import uuid
 import aiofiles
-import jwt
 from pydub import AudioSegment
-from sqlalchemy.exc import NoResultFound
 
-from src.auth.auth_service import AuthService
-from src.config import SECRET_KEY, ALGORITHM
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status, UploadFile
-from sqlalchemy import select, insert
-from src.database import User as DB_User
+from fastapi import UploadFile
+from sqlalchemy import insert
 from src.database import File as DB_File
 from src.whisper.database_service import DatabaseService
 
 
 class FileService:
-    def __init__(self, file: UploadFile, db: AsyncSession):
+    def __init__(self, db: AsyncSession, file: UploadFile = None, byte_file=None):
         self.file = file
-        self.file_name = self.file.filename.split('.')[0]
-        self.file_type = self.file.filename.split('.')[1]
-        self.hash_name = self.file_name + "_" + str(uuid.uuid4().hex)
-        whisper_dir = os.path.dirname(__file__)
-        self.file_path = os.path.join(whisper_dir, "files", f"{self.hash_name}.wav")
-        self.temp_files_path = os.path.join(whisper_dir, "temp_files", f"{self.hash_name}.wav")
+        self.byte_file = byte_file
+        self.whisper_dir = os.path.dirname(__file__)
+        if file is not None:
+            self.file_name = self.file.filename.split('.')[0]
+            self.file_type = self.file.filename.split('.')[1]
+            self.hash_name = self.file_name + "_" + str(uuid.uuid4().hex)
+            self.file_path = os.path.join(self.whisper_dir, "files", f"{self.hash_name}.wav")
+            self.temp_files_path = os.path.join(self.whisper_dir, "temp_files", f"{self.hash_name}.wav")
         self.db = db
         self.db_service = DatabaseService(db)
 
@@ -39,6 +37,15 @@ class FileService:
         audio.export(self.file_path)
         os.remove(self.temp_files_path)
 
+    async def save_bytes_file(self, file_name):
+        file_name = file_name.split('.')[0]
+        file_path = os.path.join(self.whisper_dir, "files", f"{file_name}.wav")
+        audio_stream = io.BytesIO(self.byte_file)
+        audio = AudioSegment.from_file(audio_stream)
+        if audio.channels == 2:
+            audio = audio.set_channels(1)
+        audio.export(file_path)
+
     async def delete_file(self):
         if os.path.exists(self.file_path):
             os.remove(self.file_path)
@@ -49,7 +56,6 @@ class FileService:
         new_file = {
             "user_id": user_id,
             "file_name": self.hash_name,
-            "file_path": self.file_path,
             "status": "PENDING",
             "file_type": self.file_type
         }
