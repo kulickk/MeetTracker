@@ -26,7 +26,6 @@ file = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("user_id", Integer, ForeignKey('user.id'), nullable=False),
     Column("file_name", String, nullable=False),
-    Column("file_path", String, nullable=False),
     Column("file_type", String, nullable=False),
     Column("status", String, nullable=False),
     Column("uploaded_at", TIMESTAMP, default=datetime.utcnow),
@@ -39,6 +38,7 @@ summary = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("file_id", Integer, ForeignKey('file.id'), unique=True, nullable=False),
     Column("transcription", JSON, nullable=False),
+    Column("summarization", JSON),
     Column("created_at", TIMESTAMP, default=datetime.utcnow),
     Column("uploaded_at", TIMESTAMP, default=datetime.utcnow)
 )
