@@ -1,8 +1,8 @@
 import json
 
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+import httpx
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.auth.auth_service import AuthService
 from src.auth.routers import oauth2_scheme
 from src.auth.schemas import UpdateUserInfo
@@ -43,34 +43,55 @@ async def update_user_info(info: UpdateUserInfo, token: str = Depends(oauth2_sch
         }
 
 
+async def send_request_to_whisper_server(file_name: str, token: str):
+    headers = {
+        'accept': 'application/json',
+    }
+    async with httpx.AsyncClient(timeout=httpx.Timeout(20.0)) as client:
+        try:
+            responce = await client.post(
+                f"http://localhost:8081/upload-file/{file_name}",
+                headers=headers,
+                cookies={"access_token": f'"Bearer {token}"'}
+            )
+            responce.raise_for_status()
+            return responce.json()
+        except Exception as e:
+            print(f"Error sending request to whisper server: {e}")
+
+
 @router.post('/upload-file')
-async def upload_file(file: UploadFile = File(...), token: str = Depends(oauth2_scheme),
+async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...),
+                      token: str = Depends(oauth2_scheme),
                       db: AsyncSession = Depends(get_db)):
     if file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(status_code=400, detail='Unsupported Media Type')
 
-    file_service = FileService(file, db)
-    await file_service.save_file()
+    file_service = FileService(db, file=file)
 
     s3_client = S3Client()
-    await s3_client.upload_file(file_service.file_path)
+    file_name = file_service.hash_name + "." + file_service.file_type
+    await s3_client.upload_file(file_name, file.file.read())
 
     await file_service.add_to_db(token)
+    background_tasks.add_task(send_request_to_whisper_server, file_name, token)
     return {
         'hash_file_name': file_service.hash_name,
         'file_type': file_service.file_type,
     }
 
 
-@router.post('/check-file')
+@router.get('/check-file')
 async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     db_service = DatabaseService(db)
     file_id, status = await db_service.get_file_status(token, file_name)
     if status == 'DONE':
-        summary = await db_service.get_summary(token, file_name)
+        transcription = await db_service.get_transcription(token, file_name)
+        summarization = await db_service.get_summarization(token, file_name)
         return {
             'status': status,
-            'data': json.loads(summary)
+            'transcription': json.loads(transcription),
+            'summarization': json.loads(summarization)
         }
 
     return {'status': status}
@@ -79,7 +100,7 @@ async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: As
 @router.get('/get-user-meets')
 async def get_user_meets(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     db_service = DatabaseService(db)
-    result = await db_service.get_all_transcription(token)
+    result = await db_service.get_user_meets(token)
     return result
 
 
