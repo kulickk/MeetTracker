@@ -1,0 +1,94 @@
+.page {
+    display: flex;
+    justify-content: center;
+    height: 90%;
+}
+
+.content {
+    width: 1420px;
+    height: min-content;
+    background-color: #353535;
+    border-radius: 40px;
+    margin-top: 80px;
+    padding: 50px 70px;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid 2px rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.titleContainer p {
+    margin: 0;
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 43.88px;
+    color: #FFFFFF;
+}
+
+.date {
+    font-size: 24px;
+    line-height: 29.26px;
+    color: rgba(255, 255, 255, 0.5);
+    align-content: center;
+}
+
+.meetingsContainer {
+    width: 1380px;
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.speakerContainer {
+    background-color: rgba(40, 40, 40, 1);
+    width: 340px;
+    height: 233px;
+    overflow: auto;
+    border-radius: 30px;
+    color: rgba(255, 255, 255, 1);
+    padding: 30px 40px;
+}
+
+.speakerContainer::-webkit-scrollbar {
+    width: 0;
+}
+
+.speakerTitle {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 39.01px;
+    margin: 0;
+    padding-bottom: 18px;
+    border-bottom: solid 2px rgba(255, 255, 255, 0.1);
+}
+
+.speakerPhrasesList {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin: 0;
+    margin-top: 18px;
+    padding-left: 30px;
+}
+
+.speakerPhrasesListItem {
+    font-size: 20px;
+    line-height: 24.38px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.meetingSummary {
+    font-size: 24px;
+    line-height: 29.26px;
+    color: rgba(255, 255, 255, 1);
+    padding-top: 20px;
+    border-top: solid 2px rgba(255, 255, 255, 0.1);
+}

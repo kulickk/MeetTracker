@@ -3,10 +3,23 @@
     background-color: #353535;
     margin-bottom: 20px;
     border-radius: 20px;
-    width: 390px;
+    width: min-content;
+    padding-left: 30px;
+    padding-right: 30px;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0px 0px 40px 0px #00000040;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.switcher label {
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.38px;
 }
 
 .form {
@@ -19,29 +32,21 @@
     background-color: #353535;
     flex-wrap: wrap;
     justify-content: center;
-    align-content: space-around;
     border-radius: 26px;
     box-shadow: 0px 0px 40px 0px #00000040;
+    padding: 25px 40px;
+    gap: 25px;
 }
 
-button {
-    height: 44px;
-    border: unset;
-    background: #F59D0E;
-    border-radius: 14px;
-    padding-left: 20px;
-    padding-right: 20px;
-    cursor: pointer;
-}
-
-label {
+.formData label {
     display: flex;
     justify-content: space-between;
     width: 443px;
     height: 40px;
+    flex-wrap: wrap;
 }
 
-label p {
+.formData label p {
     font-size: 24px;
     line-height: 29.26px;
     text-align: center;
@@ -52,11 +57,13 @@ label p {
 }
 
 .login {
-    height: 224px;
+    height: max-content;
+    display: none;
 }
 
 .registration {
     height: 289px;
+    display: none;
 }
 
 .formData input {
@@ -70,6 +77,7 @@ label p {
     border-radius: 14px;
     padding: 10px;
     font-size: 16px;
+    color: #FFFFFF;
 }
 
 .active {
