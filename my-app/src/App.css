@@ -1,0 +1,64 @@
+button {
+    height: 44px;
+    border: unset;
+    background: #F59D0E;
+    border-radius: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.38px;
+    transition: all 0.9s;
+}
+
+.admin-panel-button {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    color: #FFFFFF;
+    padding: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.ban-button {
+    background-color: #FF5100;
+}
+
+.set-admin-button {
+    background-color: #7E0EF5;
+}
+
+.user-button {
+    color: #282828;
+}
+
+.ban-button:hover {
+    background-color: #FFFFFF;
+    color: #FF5100;
+}
+
+label input.inputValidationError {
+    border: 2px solid rgba(255, 81, 0, 1)
+}
+
+.hidden {
+    display: none;
+}
+
+.ErrorMessage {
+    width: 320px;
+    margin: 0;
+    margin-left: 120px;
+    margin-top: -20px;
+    text-wrap: wrap;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.5px;
+    color: rgba(255, 81, 0, 1);
+}
