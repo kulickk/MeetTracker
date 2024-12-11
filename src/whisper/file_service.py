@@ -46,6 +46,12 @@ class FileService:
             audio = audio.set_channels(1)
         audio.export(file_path)
 
+    async def save_from_s3(self, file_name, file_type):
+        file_path = os.path.join(self.whisper_dir, "files", f"{file_name}.{file_type}")
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            await out_file.write(self.byte_file)
+        return file_path
+
     async def delete_file(self):
         if os.path.exists(self.file_path):
             os.remove(self.file_path)
