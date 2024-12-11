@@ -18,6 +18,8 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    telegram_id: Mapped[str] = mapped_column(String, unique=True, nullable=True)
+    link_code: Mapped[str] = mapped_column(String, unique=True, nullable=True)
     name: Mapped[str] = mapped_column(String, unique=False, nullable=False)
     surname: Mapped[str] = mapped_column(String, unique=False, nullable=False)
     patronymic: Mapped[str] = mapped_column(String, unique=False, nullable=False)
