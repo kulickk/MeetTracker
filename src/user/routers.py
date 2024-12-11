@@ -1,4 +1,5 @@
 import json
+import uuid
 
 import httpx
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth_service import AuthService
 from src.auth.routers import oauth2_scheme
 from src.auth.schemas import UpdateUserInfo
+from src.config import TELEGRAM_BOT_USERNAME
 from src.database import get_db
 from src.s3bucket.client import S3Client
 from src.user.allowed_content import ALLOWED_CONTENT_TYPES
@@ -41,6 +43,14 @@ async def update_user_info(info: UpdateUserInfo, token: str = Depends(oauth2_sch
         return {
             "status": "Successfully updated user information",
         }
+
+
+@router.get('/generate-link-tg')
+async def generate_link_tg(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+    link_code = str(uuid.uuid4())
+    await DatabaseService(db).set_tg_link_code(token, link_code)
+    telegram_link = f"https://t.me/{TELEGRAM_BOT_USERNAME}?start={link_code}"
+    return {"telegram_link": telegram_link}
 
 
 async def send_request_to_whisper_server(file_name: str, token: str):
@@ -88,10 +98,13 @@ async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: As
     if status == 'DONE':
         transcription = await db_service.get_transcription(token, file_name)
         summarization = await db_service.get_summarization(token, file_name)
+        uploaded_at, updated_at = await db_service.get_file_time(token, file_name)
         return {
             'status': status,
             'transcription': json.loads(transcription),
-            'summarization': json.loads(summarization)
+            'summarization': json.loads(summarization),
+            'uploaded_at': uploaded_at,
+            'updated_at': updated_at
         }
 
     return {'status': status}
