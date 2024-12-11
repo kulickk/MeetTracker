@@ -43,6 +43,6 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
 
 
 @router.post("/logout")
-async def logout(response: Response, db: AsyncSession = Depends(get_db)):
+async def logout(response: Response):
     response.delete_cookie(key="access_token")
     return {'status': 'Successfully logged out'}

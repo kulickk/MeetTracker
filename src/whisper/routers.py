@@ -1,13 +1,14 @@
 import json
 import os.path
-
 import aiofiles
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_db
+from src.notifications.telegram import get_telegram_bot
 from src.s3bucket.client import S3Client
+from src.whisper.database_service import DatabaseService
 from src.whisper.file_service import FileService
 from src.whisper.summary import Summary
 from src.whisper.whisper_service import WhisperService
@@ -35,22 +36,27 @@ async def send_request_to_process_file(file_name: str, token: str):
 
 @router.post("/upload-file/{file_name}")
 async def upload_file(background_tasks: BackgroundTasks, file_name: str, token: str = Depends(oauth2_scheme),
-                      db: AsyncSession = Depends(get_db)):
+                      db: AsyncSession = Depends(get_db), tg_bot=Depends(get_telegram_bot)):
     s3_client = S3Client()
     byte_file, file_type = await s3_client.get_file(file_name)
 
     file_service = FileService(db, byte_file=byte_file)
     await file_service.save_bytes_file(file_name)
 
+    tg_id = await DatabaseService(db).get_tg_id(token)
+    background_tasks.add_task(tg_bot.send_message, tg_id, f'Файл: {file_name} успешно загружен!')
+
     background_tasks.add_task(send_request_to_process_file, file_name.split('.')[0], token)
+
     return {
         'status': 'success',
     }
 
 
 @router.post("/process-file/{file_name}")
-async def process_audio(file_name: str, file_type: str = None, token: str = Depends(oauth2_scheme),
-                        db: AsyncSession = Depends(get_db)):
+async def process_audio(background_tasks: BackgroundTasks, file_name: str, file_type: str = None,
+                        token: str = Depends(oauth2_scheme),
+                        db: AsyncSession = Depends(get_db), tg_bot=Depends(get_telegram_bot)):
     whisper = WhisperService(file_name, db)
     if not os.path.exists(whisper.file_path):
         raise HTTPException(status_code=400, detail="File not found")
@@ -70,6 +76,9 @@ async def process_audio(file_name: str, file_type: str = None, token: str = Depe
 
     await summary.add_to_db(token, summarization)
 
+    tg_id = await DatabaseService(db).get_tg_id(token)
+    background_tasks.add_task(tg_bot.send_message, tg_id, f'Файл: {file_name}, успешно обработан!')
+
     return {
         'status': 'DONE',
         'transcription': transcription,
@@ -78,11 +87,14 @@ async def process_audio(file_name: str, file_type: str = None, token: str = Depe
 
 
 @router.post("/get-summary/{file_name}")
-async def get_summary(file_name: str, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+async def get_summary(background_tasks: BackgroundTasks, file_name: str, token: str = Depends(oauth2_scheme),
+                      db: AsyncSession = Depends(get_db), tg_bot=Depends(get_telegram_bot)):
     summary = Summary(file_name, db)
 
     summarization = await summary.get_summary_from_transcription()
-    summarization = json.dumps(summarization, ensure_ascii=False, indent=4)
-    await summary.add_to_db(token, summarization)
+    await summary.add_to_db(token, json.dumps(summarization, ensure_ascii=False, indent=4))
+
+    tg_id = await DatabaseService(db).get_tg_id(token)
+    background_tasks.add_task(tg_bot.send_message, tg_id, f'Сгенерирована новая выжимка из файла: {file_name}')
 
     return summarization
