@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth_service import AuthService
 from src.auth.user_service import UserService
 from src.database import User as DB_User, File as DB_File, Summary as DB_Summary
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 
 class DatabaseService:
@@ -72,11 +72,15 @@ class DatabaseService:
         files_ids = await self.get_all_files_ids(token)
         meet_arr = []
         for file_id in files_ids:
-            query = select(DB_File.file_name).where(DB_File.id == file_id)
+            query = select(DB_File.file_name, DB_File.uploaded_at, DB_File.updated_at).where(DB_File.id == file_id)
             try:
                 result = await self.db.execute(query)
-                meet_name = result.scalars().first()
-                meet_arr.append(meet_name)
+                meet_name, uploaded_at, updated_at = result.first()
+                meet_arr.append({
+                    'meet_name': meet_name,
+                    'uploaded_at': uploaded_at,
+                    'updated_at': updated_at
+                })
             except NoResultFound:
                 raise ValueError("Summary not found")
         return {'meets': meet_arr}
@@ -90,3 +94,29 @@ class DatabaseService:
         except NoResultFound:
             raise ValueError("Summarization not found")
         return summarization
+
+    async def set_tg_link_code(self, token: str, link_code: str):
+        user_id = await self.get_user_id(token)
+        update_data = update(DB_User).where(user_id == DB_User.id).values(link_code=link_code)
+        await self.db.execute(update_data)
+        await self.db.commit()
+
+    async def get_tg_id(self, token: str):
+        email = await self.get_email(token)
+        query = select(DB_User.telegram_id).where(email == DB_User.email)
+        try:
+            result = await self.db.execute(query)
+            tg_id = result.scalars().first()
+        except NoResultFound:
+            raise ValueError("Telegram account not found")
+        return tg_id
+
+    async def get_file_time(self, token: str, file_name: str):
+        file_id = await self.get_file_id(token, file_name)
+        query = select(DB_File.uploaded_at, DB_File.updated_at).where(file_id == DB_File.id)
+        try:
+            result = await self.db.execute(query)
+            uploaded_at, updated_at = result.first()
+        except NoResultFound:
+            raise ValueError("File not found")
+        return uploaded_at, updated_at
