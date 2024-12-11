@@ -1,8 +1,10 @@
 import json
+import os
 import uuid
 
 import httpx
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth_service import AuthService
 from src.auth.routers import oauth2_scheme
@@ -15,6 +17,23 @@ from src.whisper.database_service import DatabaseService
 from src.whisper.file_service import FileService
 
 router = APIRouter(prefix='/users', tags=['users'])
+
+
+async def send_request_to_whisper_server(file_name: str, token: str):
+    headers = {
+        'accept': 'application/json',
+    }
+    async with httpx.AsyncClient(timeout=httpx.Timeout(20.0)) as client:
+        try:
+            responce = await client.post(
+                f"http://localhost:8081/upload-file/{file_name}",
+                headers=headers,
+                cookies={"access_token": f'"Bearer {token}"'}
+            )
+            responce.raise_for_status()
+            return responce.json()
+        except Exception as e:
+            print(f"Error sending request to whisper server: {e}")
 
 
 @router.post('/update-user-info')
@@ -53,23 +72,6 @@ async def generate_link_tg(token: str = Depends(oauth2_scheme), db: AsyncSession
     return {"telegram_link": telegram_link}
 
 
-async def send_request_to_whisper_server(file_name: str, token: str):
-    headers = {
-        'accept': 'application/json',
-    }
-    async with httpx.AsyncClient(timeout=httpx.Timeout(20.0)) as client:
-        try:
-            responce = await client.post(
-                f"http://localhost:8081/upload-file/{file_name}",
-                headers=headers,
-                cookies={"access_token": f'"Bearer {token}"'}
-            )
-            responce.raise_for_status()
-            return responce.json()
-        except Exception as e:
-            print(f"Error sending request to whisper server: {e}")
-
-
 @router.post('/upload-file')
 async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...),
                       token: str = Depends(oauth2_scheme),
@@ -98,9 +100,11 @@ async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: As
     if status == 'DONE':
         transcription = await db_service.get_transcription(token, file_name)
         summarization = await db_service.get_summarization(token, file_name)
-        uploaded_at, updated_at = await db_service.get_file_time(token, file_name)
+        uploaded_at, updated_at, meet_type = await db_service.get_file_stats(token, file_name)
         return {
             'status': status,
+            'meet_name': file_name,
+            'meet_type': meet_type,
             'transcription': json.loads(transcription),
             'summarization': json.loads(summarization),
             'uploaded_at': uploaded_at,
@@ -108,6 +112,22 @@ async def check_file(file_name: str, token: str = Depends(oauth2_scheme), db: As
         }
 
     return {'status': status}
+
+
+@router.get('/download-file')
+async def download_file(background_tasks: BackgroundTasks, file_name: str, file_type: str,
+                        token: str = Depends(oauth2_scheme),
+                        db: AsyncSession = Depends(get_db)):
+    full_name = file_name + "." + file_type
+    s3_client = S3Client()
+    byte_file, byte_type = await s3_client.get_file(full_name)
+
+    file_service = FileService(db, byte_file=byte_file)
+    file_path = await file_service.save_from_s3(file_name, file_type)
+
+    background_tasks.add_task(os.remove, file_path)
+
+    return FileResponse(path=file_path, filename=full_name, media_type=byte_type)
 
 
 @router.get('/get-user-meets')
