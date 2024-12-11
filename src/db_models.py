@@ -8,6 +8,8 @@ user = Table(
     "user",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("telegram_id", String, unique=True, nullable=True),
+    Column("link_code", String, unique=True, nullable=True),
     Column("name", String, unique=False, nullable=False),
     Column("surname", String, unique=False, nullable=False),
     Column("patronymic", String, unique=False, nullable=False),
