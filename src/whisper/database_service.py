@@ -72,12 +72,13 @@ class DatabaseService:
         files_ids = await self.get_all_files_ids(token)
         meet_arr = []
         for file_id in files_ids:
-            query = select(DB_File.file_name, DB_File.uploaded_at, DB_File.updated_at).where(DB_File.id == file_id)
+            query = select(DB_File.file_name, DB_File.uploaded_at, DB_File.updated_at, DB_File.file_type).where(DB_File.id == file_id)
             try:
                 result = await self.db.execute(query)
-                meet_name, uploaded_at, updated_at = result.first()
+                meet_name, uploaded_at, updated_at, meet_type = result.first()
                 meet_arr.append({
                     'meet_name': meet_name,
+                    'meet_type': meet_type,
                     'uploaded_at': uploaded_at,
                     'updated_at': updated_at
                 })
@@ -111,12 +112,12 @@ class DatabaseService:
             raise ValueError("Telegram account not found")
         return tg_id
 
-    async def get_file_time(self, token: str, file_name: str):
+    async def get_file_stats(self, token: str, file_name: str):
         file_id = await self.get_file_id(token, file_name)
-        query = select(DB_File.uploaded_at, DB_File.updated_at).where(file_id == DB_File.id)
+        query = select(DB_File.uploaded_at, DB_File.updated_at, DB_File.file_type).where(file_id == DB_File.id)
         try:
             result = await self.db.execute(query)
-            uploaded_at, updated_at = result.first()
+            uploaded_at, updated_at, meet_type = result.first()
         except NoResultFound:
             raise ValueError("File not found")
-        return uploaded_at, updated_at
+        return uploaded_at, updated_at, meet_type
