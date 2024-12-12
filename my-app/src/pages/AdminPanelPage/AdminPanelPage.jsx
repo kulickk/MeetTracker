@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import styles from './AdminPanelPage.module.css'
 import api from '../../api';
 
+import ValidatorComponent from '../../components/Validator/Validator';
+
 const Account = (props) => {
     return (
         <div>Account</div>
@@ -20,6 +22,14 @@ const Config = (props) => {
 const Users = (props) => {
     const [usersRows, setUsersRows] = useState();
     const [sortOption, setSortOption] = useState('id');
+
+    const handleInputOnChange = (e) => {
+        if (e.target.classList.contains('inputValidationError')) {
+            e.target.classList.remove('inputValidationError');
+            document.getElementById(e.target.id + '-message').classList.add('hidden');
+        }
+    };
+
 
     const getUsersHtmlRows = (users) => {
        if (users) {
@@ -141,8 +151,17 @@ const Users = (props) => {
     };
 
     const handleAdminRegistration = (e) => {
-        e.preventDefault();
-        const [surname, name, patronymic, email] = Array.from(document.querySelector(`.${styles.adminRegistrationFormLabels}`).children).map((element) => element.children[1].value);        
+        const [surname, name, patronymic, email] = Array.from(document.querySelector(`.${styles.adminRegistrationFormLabels}`).children).filter((element) => {
+            if (element.tagName === 'LABEL') {
+                return element;
+            }
+        }).map((element) => {
+            console.log(element.children[1]);
+            if (element.tagName === 'LABEL') {
+                return element.children[1].value;
+            }
+        });
+        console.log(surname, name, patronymic, email);
         const body = {
             name: name,
             surname: surname,
@@ -155,7 +174,8 @@ const Users = (props) => {
             credentials: 'include',
             body: JSON.stringify(body),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
             }
         }).then((response) => {
             if (response.ok) {
@@ -204,7 +224,7 @@ const Users = (props) => {
             <div className={ styles.footerButtonsContainer }>
                 <button onClick={ handleBanUser } className={ classNames('admin-panel-button', 'ban-button') }>
                     <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 10.5C0 9.39543 0.895431 8.5 2 8.5H14C15.1046 8.5 16 9.39543 16 10.5V16C16 17.1046 15.1046 18 14 18H2C0.895431 18 0 17.1046 0 16V10.5ZM8.56499 13.39C9.11339 13.1668 9.5 12.6286 9.5 12C9.5 11.1716 8.82843 10.5 8 10.5C7.17157 10.5 6.5 11.1716 6.5 12C6.5 12.6286 6.88661 13.1668 7.43501 13.39L7 16H9L8.56499 13.39Z" fill="white"/>
+                        <path fillRule="evenodd" clipRule="evenodd" d="M0 10.5C0 9.39543 0.895431 8.5 2 8.5H14C15.1046 8.5 16 9.39543 16 10.5V16C16 17.1046 15.1046 18 14 18H2C0.895431 18 0 17.1046 0 16V10.5ZM8.56499 13.39C9.11339 13.1668 9.5 12.6286 9.5 12C9.5 11.1716 8.82843 10.5 8 10.5C7.17157 10.5 6.5 11.1716 6.5 12C6.5 12.6286 6.88661 13.1668 7.43501 13.39L7 16H9L8.56499 13.39Z" fill="white"/>
                         <path d="M8 0C4.68629 0 2 2.68629 2 6V10H5V6C5 4.34315 6.34315 3 8 3C9.65685 3 11 4.34315 11 6V10H14V6C14 2.68629 11.3137 0 8 0Z" fill="white"/>
                     </svg>
                     Заблокировать
@@ -223,30 +243,71 @@ const Users = (props) => {
                 </button>
             </div>
             <div>
-                <form className={ classNames(styles.adminRegistrationForm, styles.hidden) } >
-                    <div className={ styles.adminRegistrationFormLabels }>
-                        <label htmlFor="registration-surname">
-                            <p>Фамилия</p>
-                            <input id="registration-surname" type="login" placeholder="Введите фамилию..." />
-                        </label>
-                        <label htmlFor="registration-name">
-                            <p>Имя</p>
-                            <input id="registration-name" type="login" placeholder="Введите имя..." />
-                        </label>
-                        <label htmlFor="registration-patronymic">
-                            <p>Отчество</p>
-                            <input id="registration-patronymic" type="login" placeholder="Введите отчество..." />
-                        </label>
-                        <label htmlFor="registration-email">
-                            <p>Почта</p>
-                            <input id="registration-email" type="email" placeholder="Введите почту..." />
-                        </label>
-                    </div>
-                    <button onClick={ handleAdminRegistration } className={ classNames('admin-panel-button', 'user-button') }>
-                        <img src='../../../assets/images/button_icons/register.svg' alt='' />
-                        Зарегистрировать пользователя
-                    </button>
-                </form>
+                <ValidatorComponent validate={
+                    {
+                    'registration-surname': {
+                        valid: [
+                            {
+                                regex: /[А-Я][а-я]+/,
+                                message: 'Нужно ввести Фамилию'
+                            }
+                        ]
+                    },
+                    'registration-name': {
+                        valid: [
+                            {
+                                regex: /[А-Я][а-я]+/,
+                                message: 'Нужно ввести Имя'
+                            }
+                        ]
+                    },
+                    'registration-patronymic': {
+                        valid: [
+                            {
+                                regex: /[А-Я][а-я]+/,
+                                message: 'Нужно ввести Отчество'
+                            }
+                        ]
+                    },
+                    'registration-email': {
+                        valid: [
+                            {
+                                regex: /^[A-Za-z]+@[a-z]+\.[a-z]+/, 
+                                message: 'Почта не соответствует формату **@*.*'
+                            }
+                        ]
+                    },
+                    }
+                }>
+                    <form className={ classNames(styles.adminRegistrationForm, styles.hidden) } >
+                        <div className={ styles.adminRegistrationFormLabels }>
+                            <label htmlFor="registration-surname">
+                                <p>Фамилия</p>
+                                <input id="registration-surname" type="login" placeholder="Введите фамилию..." onChange={ handleInputOnChange }/>
+                            </label>
+                            <p className={ `ErrorMessage hidden ${styles.message}` } id="registration-surname-message"></p>
+                            <label htmlFor="registration-name">
+                                <p>Имя</p>
+                                <input id="registration-name" type="login" placeholder="Введите имя..." onChange={ handleInputOnChange }/>
+                            </label>
+                            <p className={ `ErrorMessage hidden ${styles.message}` } id="registration-name-message"></p>
+                            <label htmlFor="registration-patronymic">
+                                <p>Отчество</p>
+                                <input id="registration-patronymic" type="login" placeholder="Введите отчество..." onChange={ handleInputOnChange }/>
+                            </label>
+                            <p className={ `ErrorMessage hidden ${styles.message}` } id="registration-patronymic-message"></p>
+                            <label htmlFor="registration-email">
+                                <p>Почта</p>
+                                <input id="registration-email" type="email" placeholder="Введите почту..." onChange={ handleInputOnChange }/>
+                            </label>
+                            <p className={ `ErrorMessage hidden ${styles.message}` } id="registration-email-message"></p>
+                        </div>
+                        <button onClick={ handleAdminRegistration } className={ classNames('admin-panel-button', 'user-button') }>
+                            <img src='../../../assets/images/button_icons/register.svg' alt='' />
+                            Зарегистрировать пользователя
+                        </button>
+                    </form>
+                </ValidatorComponent>
             </div>
         </div>
     );
@@ -291,20 +352,20 @@ const AdminPanelPage = (props) => {
         }
     };
 
-    if (!users) {
-        fetch(api.adminGetUsers, {
-            credentials: 'include',
-            mode: 'cors',
-        }).then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-        }).then((data) => {
-            if (!users) {
-                setUsers(data);
-            }
-        });
-    }
+    useEffect(() => {
+        if (!users) {
+            fetch(api.adminGetUsers, {
+                credentials: 'include',
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            }).then((data) => {
+                if (!users) {
+                    setUsers(data);
+                }
+            })
+    }});
     return (
         <div className={ styles.page }>
             <div>

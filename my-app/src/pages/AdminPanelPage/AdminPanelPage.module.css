@@ -90,7 +90,7 @@ html::-webkit-scrollbar {
         font-size: 16px;
         font-weight: 400;
         line-height: 19.5px;
-        color: #FFFFFF66;
+        color: #FFFFFF;
     }
 
     .usersSearcher input:focus {
@@ -147,7 +147,7 @@ html::-webkit-scrollbar {
     /* Users Table */
     .usersTableHeader {
         display: grid;
-        grid-template-columns: 50px 450px 350px 100px;
+        grid-template-columns: 50px 450px 410px 40px;
         margin-top: 20px;
         margin-bottom: 20px;
         padding-left: 55px;
@@ -163,6 +163,11 @@ html::-webkit-scrollbar {
         margin: 0;
     }
 
+    .usersTableHeader p:nth-last-child(1) {
+        margin-left: -15px;
+    }
+
+
     .usersTableContainer {
         height: 400px;
         width: 100%;
@@ -177,7 +182,7 @@ html::-webkit-scrollbar {
 
     .usersTableContainer tr {
         display: grid;
-        grid-template-columns: 50px 450px 350px 100px;
+        grid-template-columns: 50px 450px 410px 40px;
         height: 50px;
         padding-left: 55px;
         padding-right: 55px;
@@ -186,8 +191,8 @@ html::-webkit-scrollbar {
     }
 
     .usersTableContainer tr td {
-        font-size: 20px;
-        line-height: 24.38px;
+        font-size: 16px;
+        line-height: 19.5px;
         user-select: none;
         color: #FFFFFF;
     }
@@ -233,16 +238,25 @@ html::-webkit-scrollbar {
         display: flex;
         flex-direction: column;
         gap: 25px;
-        width: 443px;
+        width: 500px;
     }
 
-    .adminRegistrationFormLabels p {
+    .adminRegistrationFormLabels label p {
         font-size: 24px;
         font-weight: 400;
         line-height: 29.26px;
     }
 
-    .adminRegistrationFormLabels label input {
+    .adminRegistrationFormLabels label {
+        width: 100%;
+    }
+
+    .adminRegistrationFormLabels .message {
+        margin-left: 150px;
+        width: 250px;
+    }
+
+    .adminRegistrationFormLabels input {
         background-color: #282828;
         outline: none;
         border: none;
@@ -250,8 +264,9 @@ html::-webkit-scrollbar {
         font-size: 16px;
         font-weight: 400;
         line-height: 19.5px;
-        width: 280px;
+        width: 328px;
         padding-left: 20px;
+        color: #FFFFFF;
     }
 
     .adminRegistrationForm button {

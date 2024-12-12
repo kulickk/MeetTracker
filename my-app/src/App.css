@@ -42,3 +42,23 @@ button {
     background-color: #FFFFFF;
     color: #FF5100;
 }
+
+label input.inputValidationError {
+    border: 2px solid rgba(255, 81, 0, 1)
+}
+
+.hidden {
+    display: none;
+}
+
+.ErrorMessage {
+    width: 320px;
+    margin: 0;
+    margin-left: 120px;
+    margin-top: -20px;
+    text-wrap: wrap;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.5px;
+    color: rgba(255, 81, 0, 1);
+}
