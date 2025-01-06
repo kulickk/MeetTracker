@@ -6,9 +6,19 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+/__pycache__/
+/ollama/
 
 *.xml
 *.iml
 *.lock
-.env
-.idea
+*.env
+*.idea
+*.pub
+*.pyc
+*.txt
+*.db
+*.onnx
+*.wav
+*.mp4
+*.bin

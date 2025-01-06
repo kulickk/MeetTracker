@@ -1,0 +1,6 @@
+FROM ollama/ollama:0.3.14
+
+EXPOSE 11434
+
+RUN ollama pull kulick/t-lite
+

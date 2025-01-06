@@ -8,14 +8,14 @@ from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import SUMMARY_SERVER_IP, SUMMARY_SERVER_PORT
-from src.whisper.database_service import DatabaseService
+from src.database_service import DatabaseService
 from src.database import Summary as DB_Summary
 
 
 class Summary:
     def __init__(self, file_name: str, db: AsyncSession):
         self.file_name = file_name
-        self.file_path: str = os.path.join(os.path.dirname(__file__), 'files', f'{file_name}.json')
+        self.file_path: str = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'files', f'{file_name}.json')
         self.conversation_string = Summary.load_conversation_data(self)
         self.ollama_endpoint = f"http://{SUMMARY_SERVER_IP}:{SUMMARY_SERVER_PORT}/api/generate"
         self.ollama_prompt = '''

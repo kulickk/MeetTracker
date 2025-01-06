@@ -1,0 +1,13 @@
+__pycache__/
+venv/
+node_modules/
+build/
+dist/
+src/whisper/
+
+*.log
+*.pyc
+*.pyo
+*.pyd
+*.db
+.DS_Store
