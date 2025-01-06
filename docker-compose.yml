@@ -57,6 +57,8 @@ services:
     tty: true
     restart: unless-stopped
     image: ollama/ollama:latest
+    expose:
+      - "11434"
     ports:
       - 7869:7869
       - 11434:11434
