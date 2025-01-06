@@ -115,5 +115,7 @@ class Summary:
             summary_status="DONE",
             updated_at=datetime.utcnow()
         )
+        
         await self.db.execute(update_data)
+        await self.db.execute(update_status)
         await self.db.commit()
