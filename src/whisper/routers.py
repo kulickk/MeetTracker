@@ -14,6 +14,7 @@ from src.whisper.summary import Summary
 from src.whisper.whisper_service import WhisperService
 from src.auth.routers import oauth2_scheme
 from pathlib import Path
+
 router = APIRouter()
 dir = os.path.dirname(os.path.dirname(__file__))
 
@@ -44,7 +45,10 @@ async def upload_file(
     tg_bot=Depends(get_telegram_bot),
 ):
     s3_client = S3Client()
-    byte_file, file_type = await s3_client.get_file(file_name)
+    try:
+        byte_file, file_type = await s3_client.get_file(file_name)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="File not found")
 
     file_service = FileService(db, byte_file=byte_file)
     await file_service.save_bytes_file(file_name)
@@ -75,15 +79,13 @@ async def process_audio(
 ):
     whisper = WhisperService(file_name, db)
     if not os.path.exists(whisper.file_path):
-        raise HTTPException(status_code=400, detail="File not found")
+        raise HTTPException(status_code=404, detail="File not found")
 
     result = await whisper.run()
     transcription = await FileService.prepare_json(result)
     transcription = json.dumps(transcription, ensure_ascii=False, indent=4)
     file_path = Path(dir) / "files" / f"{file_name}.json"
-    async with aiofiles.open(
-        file_path, "w", encoding="utf-8"
-    ) as f:
+    async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
         await f.write(transcription)
 
     await whisper.add_to_db(token, transcription)
@@ -112,7 +114,10 @@ async def get_summary(
     db: AsyncSession = Depends(get_db),
     tg_bot=Depends(get_telegram_bot),
 ):
-    summary = Summary(file_name, db)
+    try:
+        summary = Summary(file_name, db)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail="File not found")
 
     summarization = await summary.get_summary_from_transcription()
     await summary.add_to_db(
@@ -122,7 +127,9 @@ async def get_summary(
     tg_id = await DatabaseService(db).get_tg_id(token)
     if tg_id:
         background_tasks.add_task(
-            tg_bot.send_message, tg_id, f"Сгенерирована новая выжимка из файла: {file_name}"
+            tg_bot.send_message,
+            tg_id,
+            f"Сгенерирована новая выжимка из файла: {file_name}",
         )
 
     return summarization
