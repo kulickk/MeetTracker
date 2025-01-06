@@ -26,7 +26,7 @@ async def send_request_to_whisper_server(file_name: str, token: str):
     async with httpx.AsyncClient(timeout=httpx.Timeout(20.0)) as client:
         try:
             responce = await client.post(
-                f"http://localhost:8081/upload-file/{file_name}",
+                f"http://whisper:8081/upload-file/{file_name}",
                 headers=headers,
                 cookies={"access_token": f'"Bearer {token}"'},
             )
