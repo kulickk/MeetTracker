@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import SUMMARY_SERVER_IP, SUMMARY_SERVER_PORT
 from src.database_service import DatabaseService
-from src.database import Summary as DB_Summary
+from src.database import Summary as DB_Summary, File as DB_File
 
 
 class Summary:
@@ -109,6 +109,11 @@ class Summary:
         update_data = update(DB_Summary).where(file_id == DB_Summary.file_id).values(
             summarization=summarization,
             uploaded_at=datetime.utcnow()
+        )
+        
+        update_status = update(DB_File).where(file_id == DB_File.id).values(
+            summary_status="DONE",
+            updated_at=datetime.utcnow()
         )
         await self.db.execute(update_data)
         await self.db.commit()

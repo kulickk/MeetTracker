@@ -24,10 +24,6 @@ class WhisperService:
 
     async def add_to_db(self, token: str, transcription_data):
         file_id = await self.db_service.get_file_id(token, self.file_name)
-        print('----')
-        print(file_id)
-        print(transcription_data)
-        print('----')
         insert_summary = insert(DB_Summary).values(
             file_id=file_id,
             transcription=transcription_data,
@@ -36,7 +32,7 @@ class WhisperService:
         )
 
         update_file = update(DB_File).where(file_id == DB_File.id).values(
-            status="DONE",
+            transcription_status="DONE",
             updated_at=datetime.utcnow()
         )
 
