@@ -1,211 +1,96 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-
+import Header from '../../components/Header/Header';
 import styles from './MainPage.module.css'
-import api from "../../api";
-import routing from '../../routing';
-import classNames from 'classnames';
 
-const Meetings = (props) => {
-    const showMeetingStatus = (status) => {
-        if (status === 'pending') {
-            return (
-                <svg className={ classNames(styles.statusIcon, styles.statusPending) } width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M18 9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9C0 4.02944 4.02944 0 9 0V4C6.23858 4 4 6.23858 4 9C4 11.7614 6.23858 14 9 14C11.7614 14 14 11.7614 14 9H18Z" fill="url(#paint0_linear_1209_535)"/>
-                    <defs>
-                        <linearGradient id="paint0_linear_1209_535" x1="9" y1="9" x2="18" y2="9" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="#FFAC25"/>
-                            <stop offset="1" stopColor="#FFAC25" stopOpacity="0"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-            );
-        }
-        else if (status === 'done') {
-            return (
-                <svg className={ styles.statusIcon } width="19" height="14" viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1.44364 6.99996C0.662587 6.21892 0.662587 4.95259 1.44364 4.17154C2.22468 3.39049 3.49101 3.39049 4.27206 4.17154L9.92892 9.82839C10.71 10.6094 10.71 11.8758 9.92892 12.6568C9.14787 13.4379 7.88154 13.4379 7.10049 12.6568L1.44364 6.99996Z" fill="#49AB26"/>
-                    <path d="M15.5858 1.34311C16.3668 0.562062 17.6332 0.562062 18.4142 1.34311C19.1952 2.12416 19.1952 3.39049 18.4142 4.17154L9.92892 12.6568C9.14787 13.4379 7.88154 13.4379 7.10049 12.6568C6.31944 11.8758 6.31944 10.6094 7.10049 9.82839L15.5858 1.34311Z" fill="#49AB26"/>
-                </svg>
-
-            );
-        }
-        else if (status === 'error') {
-            return (
-                <svg className={ styles.statusIcon } width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.612039 3.56722C-0.204013 2.75117 -0.204013 1.42809 0.612039 0.612039C1.42809 -0.204013 2.75117 -0.204013 3.56722 0.612039L15.388 12.4328C16.204 13.2488 16.204 14.5719 15.388 15.388C14.5719 16.204 13.2488 16.204 12.4328 15.388L0.612039 3.56722Z" fill="#FF5100"/>
-                    <path d="M3.56722 15.388C2.75117 16.204 1.42809 16.204 0.612039 15.388C-0.204013 14.5719 -0.204013 13.2488 0.612039 12.4328L12.4328 0.612039C13.2488 -0.204013 14.5719 -0.204013 15.388 0.612039C16.204 1.42809 16.204 2.75117 15.388 3.56722L3.56722 15.388Z" fill="#FF5100"/>
-                </svg>
-            );
-        } 
-    };
-
-    const getMeetings = (meetings) => {
-        if (meetings) {
-            const formattedMeetings = Object.keys(meetings).map(
-                (key) => {
-                    if (meetings[key]) {
-                        return (
-                            <Link to={ routing.mainPage + '/' + key } key={ key }>
-                                <div className={ styles.meetingCard }>
-                                    <p className={ styles.meetingTitle }>Название встречи {key}</p>
-                                    <div className={ styles.meetingDateContainer }>
-                                        <p className={ styles.meetingDate }>23.11.2024</p>
-                                        { showMeetingStatus('done') }
-                                    </div>
-                                </div>
-                            </Link>
-                        );
-                    }
-                    else {
-                        return (
-                            <div className={ styles.meetingCard } key={ key }>
-                                <p className={ styles.meetingTitle }>Название встречи {key}</p>
-                                <div className={ styles.meetingDateContainer }>
-                                    <p className={ styles.meetingDate }>23.11.2024</p>
-                                    { showMeetingStatus('pending') }
-                                </div>
-                            </div>
-                        );
-                    }
-                }
-            )
-            return formattedMeetings;
-        }
-    };
-    return (
-        <div className={ styles.content }>
-            { getMeetings(props.meetings) }
-        </div>
-    );
-}; 
+import { getMeets, sendFile } from './utils/MainPageRequests';
+import { FileUploadForm, Meetings } from './utils/MainPageUtils';
+import Message from '../../components/Message/Message';
 
 
 const MainPage = (props) => {
+    const navigate = useNavigate();
     const [meetings, setMeetings] = useState(undefined);
     const [files, setFiles] = useState(undefined);
-    const [isLoading, setIsLoading] = useState(false);
- 
-    const showMeetingStatus = (status) => {
-        if (status === 'pending') {
-            return (
-                <svg className={ classNames(styles.statusIcon, styles.statusPending) } width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M18 9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9C0 4.02944 4.02944 0 9 0V4C6.23858 4 4 6.23858 4 9C4 11.7614 6.23858 14 9 14C11.7614 14 14 11.7614 14 9H18Z" fill="url(#paint0_linear_1209_535)"/>
-                    <defs>
-                        <linearGradient id="paint0_linear_1209_535" x1="9" y1="9" x2="18" y2="9" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="#FFAC25"/>
-                            <stop offset="1" stopColor="#FFAC25" stopOpacity="0"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-            );
-        }
-        else if (status === 'done') {
-            return (
-                <svg className={ styles.statusIcon } width="19" height="14" viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1.44364 6.99996C0.662587 6.21892 0.662587 4.95259 1.44364 4.17154C2.22468 3.39049 3.49101 3.39049 4.27206 4.17154L9.92892 9.82839C10.71 10.6094 10.71 11.8758 9.92892 12.6568C9.14787 13.4379 7.88154 13.4379 7.10049 12.6568L1.44364 6.99996Z" fill="#49AB26"/>
-                    <path d="M15.5858 1.34311C16.3668 0.562062 17.6332 0.562062 18.4142 1.34311C19.1952 2.12416 19.1952 3.39049 18.4142 4.17154L9.92892 12.6568C9.14787 13.4379 7.88154 13.4379 7.10049 12.6568C6.31944 11.8758 6.31944 10.6094 7.10049 9.82839L15.5858 1.34311Z" fill="#49AB26"/>
-                </svg>
+    const [messageTitle, setMessageTitle] = useState('');
+    const [messageText, setMessageText] = useState('');
+    const [messageShown, setMessageShown] = useState(false);
 
-            );
+    const messageInfoObj = {
+        title: {
+            get: messageTitle,
+            set: setMessageTitle
+        },
+        text: {
+            get: messageText,
+            set: setMessageText
         }
-        else if (status === 'error') {
-            return (
-                <svg className={ styles.statusIcon } width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.612039 3.56722C-0.204013 2.75117 -0.204013 1.42809 0.612039 0.612039C1.42809 -0.204013 2.75117 -0.204013 3.56722 0.612039L15.388 12.4328C16.204 13.2488 16.204 14.5719 15.388 15.388C14.5719 16.204 13.2488 16.204 12.4328 15.388L0.612039 3.56722Z" fill="#FF5100"/>
-                    <path d="M3.56722 15.388C2.75117 16.204 1.42809 16.204 0.612039 15.388C-0.204013 14.5719 -0.204013 13.2488 0.612039 12.4328L12.4328 0.612039C13.2488 -0.204013 14.5719 -0.204013 15.388 0.612039C16.204 1.42809 16.204 2.75117 15.388 3.56722L3.56722 15.388Z" fill="#FF5100"/>
-                </svg>
-            );
-        } 
     };
+
+    const messageShownObj = {
+        get: messageShown, 
+        set: setMessageShown
+    }
+ 
     // Получаем все встречи 
     useEffect(() => {
-        if (!meetings && !isLoading) {
-            fetch(api.usersGetMeets, {
-                credentials: 'include',
-            }).then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-            }).then((data) => {
-                if (!meetings) {
-                    console.log(data);
-                    setMeetings(data);
-                }                
-            })
+        if (!meetings) {
+            getMeets(setMeetings, navigate);
     }});
-
-    useEffect(() => console.log(123), [])
-    
-
-    const handleDropFile = (e) => {
-        e.preventDefault();
-
-        const fileInput = document.querySelector(`.${styles.fileFormFilesField} input`);
-        fileInput.files = e.dataTransfer.files;
-    };
-
-    const handleChooseFileByClick = (e) => {
-        e.preventDefault();
-        let fileInput = e.target.closest('div').querySelector('input');
-        fileInput.click()
-    };
 
     const handleRemoveFile = (e) => {
         e.preventDefault();
-        setFiles(undefined);
+        setFiles('');
     };
+    
 
-    const handleFilesChange = (e) => {
-        setFiles(e.target.files);
-    };
-
-    const handleSendFile = (e) => {
+    const handleSendFile = async (e) => {
         e.preventDefault();
-
-        setMeetings(Object.assign({}, meetings, { 0: {text: ''} }));
-
-        const file = new FormData();
-        file.append('file', files[0])
-        fetch(api.usersUploadFile, {
-            method: 'POST',
-            credentials: 'include',
-            body: file,
-        }).then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-        }).then((data) => fetch(`http://localhost:8081/process-file/?file_name=${data.hash_file_name}&file_type=wav`, {
-            method: 'POST',
-            credentials: 'include',
-        }))
+        const senderButton = e.target;
+        if (files) {
+            senderButton.disabled = true;
+            sendFile(files[0], senderButton, navigate, setMeetings, messageShownObj, messageInfoObj.title, messageInfoObj.text);
+        }
     };
 
     return (
+        <>
+        <Header userName={ props.userData.userName }/>
         <div className={ styles.page }>
             <div>
-                <p className={ styles.title }>Ваши встречи</p>
+                <div className={ styles.titleContainer }>
+                    <p className={ styles.title }>Ваши встречи</p>
+                    <Message
+                    shown={ messageShownObj }
+                    messageInfo={ messageInfoObj }/>
+                </div>
                 <div className={ styles.panel }>
                     <Meetings meetings={ meetings } />
                     <form className={ styles.fileForm }>
                         <input className={ styles.fileFormMeetingName } type="text" placeholder='Введите название...'/>
-                        <div className={ styles.fileFormFilesField } onDrop={ handleDropFile } onDragOver={(e) => {e.preventDefault()}}>
-                            <svg width="48" height="73" viewBox="0 0 48 73" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 12.5C0 5.87258 5.37258 0.5 12 0.5H36L48 14V60.5C48 67.1274 42.6274 72.5 36 72.5H12C5.37258 72.5 0 67.1274 0 60.5V12.5Z" fill="white"/>
-                                <path d="M36 0.5L48 14H43.5C36 14 36 8.31371 36 5V0.5Z" fill="#4D4D4D"/>
+                        <FileUploadForm 
+                        files={ files }
+                        setFiles={ setFiles }/>
+                        <button onClick={ handleRemoveFile } className={ 'admin-panel-button delete-button' }>
+                            <svg width="15" height="18" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0.5 1C0.5 0.447715 0.947715 0 1.5 0H13.5C14.0523 0 14.5 0.447715 14.5 1C14.5 1.55228 14.0523 2 13.5 2H1.5C0.947716 2 0.5 1.55228 0.5 1Z" fill="white"/>
+                                <path fillRule="evenodd" clipRule="evenodd" d="M13.5 3H1.5L3.26858 16.2643C3.40106 17.2579 4.24863 18 5.25103 18H9.74897C10.7514 18 11.5989 17.2579 11.7314 16.2643L13.5 3ZM4.95088 13.5579C4.97884 13.8096 5.19157 14 5.44478 14C5.74097 14 5.97139 13.7426 5.93869 13.4482L5.04912 5.44206C5.02116 5.1904 4.80843 5 4.55522 5C4.25903 5 4.02861 5.25745 4.06131 5.55182L4.95088 13.5579ZM9.55522 14C9.80843 14 10.0212 13.8096 10.0491 13.5579L10.9387 5.55182C10.9714 5.25745 10.741 5 10.4448 5C10.1916 5 9.97884 5.1904 9.95088 5.44206L9.06131 13.4482C9.02861 13.7426 9.25903 14 9.55522 14ZM8 13.5C8 13.7761 7.77614 14 7.5 14C7.22386 14 7 13.7761 7 13.5V5.5C7 5.22386 7.22386 5 7.5 5C7.77614 5 8 5.22386 8 5.5V13.5Z" fill="white"/>
                             </svg>
-                            <p><a href='#' onClick={ handleChooseFileByClick }>Click to upload</a> or 
-                            drag and drop</p>
-                            <input onChange={ handleFilesChange } type='file' hidden/>
-                            <p className={ styles.costraintMaxSize }>Maximum file size 500MB.</p>
-                        </div>
-                        <button onClick={ handleRemoveFile }>Удалить</button>
-                        <button onClick={ handleSendFile }>Отправить</button>
+                            Удалить
+                            </button>
+                        <button onClick={ handleSendFile } className={ 'admin-panel-button send-button' }>
+                            <svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.6832 4.83318L7.27761 1.32278C6.95005 1.237 6.65908 1.5509 6.7694 1.87103L8.34749 6.44999C8.40604 6.61988 8.56533 6.7344 8.74502 6.73579L14.8804 6.78334C15.2802 6.78644 15.4539 7.29043 15.1409 7.53917L10.3376 11.3566C10.1969 11.4684 10.142 11.6568 10.2005 11.8267L11.7786 16.4056C11.8889 16.7258 12.3115 16.7937 12.5167 16.5244L20.913 5.50017C21.0963 5.2595 20.9758 4.90981 20.6832 4.83318Z" fill="#282828"/>
+                                <path d="M8.34285 12.7317L4.08241 16.2279M9.72477 9.02389L3.3325 11.2933M6.51131 7.15277L1 6.72882M20.6832 4.83318L7.27761 1.32278C6.95005 1.237 6.65908 1.5509 6.7694 1.87103L8.34749 6.44999C8.40604 6.61988 8.56533 6.7344 8.74502 6.73579L14.8804 6.78334C15.2802 6.78644 15.4539 7.29043 15.1409 7.53917L10.3376 11.3566C10.1969 11.4684 10.142 11.6568 10.2005 11.8267L11.7786 16.4056C11.8889 16.7258 12.3115 16.7937 12.5167 16.5244L20.913 5.50017C21.0963 5.2595 20.9758 4.90981 20.6832 4.83318Z" stroke="#282828"/>
+                            </svg>
+                            Отправить
+                            </button>
                     </form>
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

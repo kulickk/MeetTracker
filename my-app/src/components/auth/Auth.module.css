@@ -1,8 +1,8 @@
 .switcher {
-    height: 64px;
+    height: 54px;
     background-color: #353535;
     margin-bottom: 20px;
-    border-radius: 20px;
+    border-radius: 16px;
     width: min-content;
     padding-left: 30px;
     padding-right: 30px;
@@ -24,7 +24,7 @@
 
 .form {
     height: auto;
-    width: 523px;
+    width: 530px;
 }
 
 .registration, .login {
@@ -35,13 +35,21 @@
     border-radius: 26px;
     box-shadow: 0px 0px 40px 0px #00000040;
     padding: 25px 40px;
-    gap: 25px;
+}
+
+.registration > label, .login > label,
+.registration > button, .login > button {
+    margin-top: 20px;
+}
+
+.registration > label:nth-child(1), .login > label:nth-child(1) {
+    margin-top: 0;
 }
 
 .formData label {
     display: flex;
     justify-content: space-between;
-    width: 443px;
+    width: 450px;
     height: 40px;
     flex-wrap: wrap;
 }
@@ -69,7 +77,7 @@
 .formData input {
     outline: none;
     border: unset;
-    width: 300px;
+    width: 280px;
     padding: 0;
     padding-block: 0;
     padding-inline: 0;

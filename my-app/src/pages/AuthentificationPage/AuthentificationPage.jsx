@@ -1,19 +1,25 @@
 import { React } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import Header from '../../components/Header/Header.jsx';
 import Auth from '../../components/auth/Auth';
+
 import styles from './AuthentificationPage.module.css'
-import api from '../../api';
-import routing from '../../routing';
 
 const AuthPage = (props) => {
     return (
+        <>
+        <Header userData={ props.userData }/>
         <div className={ styles.content }>
             <Auth 
             handleLogIn={ props.handleLogIn } 
             handleRegistration={ props.handleRegistration } 
             user={ props.user } 
-            loginForm={ props.loginForm } />
+            loginForm={ props.loginForm } 
+            userName={ props.userName }
+            userData={ props.userData }
+            />
         </div>
+        </>
     );
 };
 

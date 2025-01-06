@@ -1,60 +1,96 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 // utils
 import './App.css';
-import routing from './routing.js';
-import api from './api.js';
+import routing from './utils/links/routing.js';
 
 // pages
 import AuthPage from './pages/AuthentificationPage/AuthentificationPage.jsx';
-import Header from './components/Header/Header.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
 import MainPage from './pages/MainPage/MainPage.jsx';
 import MeetingPage from './pages/MeetingPage/MeetingPage.jsx';
-import AdminPanelPage from './pages/AdminPanelPage/AdminPanelPage.jsx';
+import UserProfilePage from './pages/UserProfilePage/UserProfilePage.jsx';
+import api from './utils/links/api.js';
 
 
 const App = () => {
   const [user, setUser] = useState(true);
+  const [userName, setUsername] = useState(window.localStorage.getItem('login'));
+  const [isadmin, setIsAdmin] = useState(window.localStorage.getItem('is_admin') === 'true');
+
+  const userData = {
+    userName: {
+      userName: userName,
+      setUsername: setUsername
+    },
+    admin: {
+      isAdmin: isadmin,
+      setIsAdmin: setIsAdmin
+    }
+  };
 
   const handleLogOut = e => {
     setUser(false);
+    setUsername('');
   };
+
+  // const resetValuesList = {
+  //   'boolean': false,
+  //   'string': ''
+  // }
+
+  // Object.keys(userData).forEach((key) => {
+  //   const category = userData[key]
+  //   const [value, setter] = Object.values(category);
+  //   // setter(resetValuesList[typeof value]);
+  //   console.log(value, resetValuesList[typeof value]);
+  // });
 
   return (
     <Router>
-      <Header />
+      {/* <Header userName={ userName }/> */}
       <Routes>
         {/* Аутентификация */}
         <Route exact path={ routing.authentidication } element={
           <AuthPage
-          user={ user } />
+          user={ user }
+          userData={ userData } />
         }/>
 
         {/* Главная страница */}
         <Route path={ routing.mainPage } >
             <Route path={ routing.index } element={
               <ProtectedRoute user={ user }>
-                <MainPage />
+                <MainPage 
+                userData={ userData }
+                />
               </ProtectedRoute>
             }/>
             <Route path={ routing.meeting } element={
               <ProtectedRoute user={ user }>
-                <MeetingPage />
+                <MeetingPage 
+                userData={ userData }
+                />
               </ProtectedRoute>
             } />
         </ Route>
 
-        {/* Страница встречи */}
-        
-
-        {/* Админ-панель */}
-        <Route path={ routing.admin } element={
+        {/* Профиль пользователя */}
+        <Route path={ routing.profile } element={
           <ProtectedRoute user={ user }>
-            <AdminPanelPage handleLogOut={handleLogOut}/>
+            <UserProfilePage 
+            handleLogOut={handleLogOut}
+            userData={ userData }
+            />
           </ProtectedRoute>
         }/>
+
+        {/* Контент не найден */}
+        <Route path='/' element={
+          <Navigate to={ routing.mainPage } />
+        }
+        />
       </Routes>
     </Router>
   );

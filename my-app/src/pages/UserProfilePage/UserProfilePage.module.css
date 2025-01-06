@@ -24,6 +24,14 @@ html::-webkit-scrollbar {
 }
 
 /* Title */
+.titleContainer {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .title {
     color: #FFFFFF;
     font-size: 36px;
@@ -32,8 +40,6 @@ html::-webkit-scrollbar {
     text-align: left;
     margin: 0;
     padding: 0;
-    margin-top: 50px;
-    margin-bottom: 50px;
 }
 
 /* Content styles  */
@@ -184,8 +190,8 @@ html::-webkit-scrollbar {
         display: grid;
         grid-template-columns: 50px 450px 410px 40px;
         height: 50px;
-        padding-left: 55px;
-        padding-right: 55px;
+        padding-left: 50px;
+        padding-right: 60px;
         justify-items: center;
         align-items: center;
     }
@@ -213,15 +219,7 @@ html::-webkit-scrollbar {
     .footerButtonsContainer {
         display: flex;
         justify-content: space-between;
-        margin-top: 50px;
-    }
-
-    .footerButtonsContainer svg path {
-        transition: fill 0.9s;
-    }
-
-    .footerButtonsContainer button:nth-child(1):hover svg path {
-        fill: #FF5100;
+        margin-top: 30px;
     }
 
     /* Admin Registation Form */
@@ -237,26 +235,32 @@ html::-webkit-scrollbar {
     .adminRegistrationFormLabels {
         display: flex;
         flex-direction: column;
-        gap: 25px;
         width: 500px;
     }
 
-    .adminRegistrationFormLabels label p {
-        font-size: 24px;
-        font-weight: 400;
+    .adminRegistrationFormLabels > .registrationFormLabel {
+        margin-top: 20px;
+    }
+
+    .adminRegistrationFormLabels > .registrationFormLabel:nth-child(1) {
+        margin-top: 0;
+    }
+
+    .registrationFormLabel {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .registrationFormLabelTitle {
         line-height: 29.26px;
+        color: #FFFFFF;
+        display: inline;
+        margin: 0;
     }
 
-    .adminRegistrationFormLabels label {
-        width: 100%;
-    }
-
-    .adminRegistrationFormLabels .message {
-        margin-left: 150px;
-        width: 250px;
-    }
-
-    .adminRegistrationFormLabels input {
+    .registrationFormLabelInput {
         background-color: #282828;
         outline: none;
         border: none;
@@ -267,6 +271,12 @@ html::-webkit-scrollbar {
         width: 328px;
         padding-left: 20px;
         color: #FFFFFF;
+        height: 100%;
+    }
+
+    .adminRegistrationFormLabels .message {
+        margin-left: 150px;
+        width: 250px;
     }
 
     .adminRegistrationForm button {

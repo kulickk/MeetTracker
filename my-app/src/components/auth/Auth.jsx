@@ -1,11 +1,13 @@
 import { React, useState } from "react";
-import { Form, Link, useNavigate, Navigate } from "react-router-dom";
-import classNames from "classnames";
-import styles from './Auth.module.css'
-import api from "../../api";
-import routing from "../../routing";
+import { useNavigate } from "react-router-dom";
 
-import ValidatorComponent from "../Validator/Validator";
+import api from "../../utils/links/api";
+import routing from "../../utils/links/routing";
+import {validateForm, onChangeValidatedInput} from "../../utils/validation/validateForm.js";
+import { emailExp } from "../../utils/validation/regExp.js";
+
+import styles from './Auth.module.css'
+
 
 const Auth = (props) => {
     const [isSending, setIsSending] = useState(false);
@@ -13,50 +15,80 @@ const Auth = (props) => {
     const [logIn, setLogIn] = useState('');
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
-
-    const onChangeLogin = e => {
+    const onChangeLogin = (e) => {
         setLogIn(e.target.value);
-        if (e.target.classList.contains('inputValidationError')) {
-            e.target.classList.remove('inputValidationError');
-            document.getElementById(e.target.id + '-message').classList.add('hidden');
-        }
-        console.log('Логин', e.target.value);
+        onChangeValidatedInput(e.target);
       };
     
-      const onChangePassword = e => {
+      const onChangePassword = (e) => {
         setPassword(e.target.value);
-        console.log('Пароль', e.target.value);
       };
     
-      const onChangeNickname = e => {
+      const onChangeNickname = (e) => {
         setNickname(e.target.value);
-        console.log('Никнейм', e.target.value);
       };
 
-    const handleLogIn = e => {
-        fetch(api.logIn, {
-          method: 'POST',
-          credentials: 'include',
-          mode: 'cors',
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            'grant_type': 'password',
-            'username': 'user@example.com',
-            'password': '123123123',
-            'scope': '',
-            'client_id': 'string',
-            'client_secret': 'string'
-          })}).then((response) => {
-            if (response.ok) {
-                navigate(routing.mainPage)
+    const handleLogIn = (e) => {
+        e.preventDefault();
+        const form = e.target.closest('form');
+        const validate= {
+            'login-login': {
+                valid: [
+                    {
+                        regex: emailExp, 
+                        message: 'Почта не соответствует формату **@*.*'
+                    }
+                ]
+            },
+            'login-password': {
+                valid: [
+                    {
+                        regex: /\w{2,}/,
+                        message: 'Нужно ввести пароль'
+                    }
+                ]
             }
-          });
+        };
+        const validateResult = validateForm(form, validate);
+        console.log(validateResult);
+        if (validateResult) {
+            fetch(api.logIn, {
+                method: 'POST',
+                credentials: 'include',
+                mode: 'cors',
+                headers: {
+                  'accept': 'application/json',
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                  'grant_type': 'password',
+                  'username': logIn,
+                  'password': password,
+                  'scope': '',
+                  'client_id': 'string',
+                  'client_secret': 'string'
+                })}).then((response) => {
+                  if (response.ok) {
+                      fetch(api.usersMe, {
+                          credentials: 'include'
+                      }).then((response) => {
+                          if (response.ok) {
+                              return response.json()
+                          }
+                      }).then((data) => {
+                          const username = [data.surname, data.name, data.patronymic].join(' ');
+                          window.localStorage.setItem('login', username);
+                          window.localStorage.setItem('is_admin', data.is_admin);
+                          props.userData.userName.setUsername(username);
+                          props.userData.admin.setIsAdmin(data.is_admin);
+                      })
+                      navigate(routing.mainPage);
+                  }
+                });
+        }
       };
     
-    const handleRegistration = e => {
+    const handleRegistration = (e) => {
         e.preventDefault();
         let [surname, name, patronymic] = nickname.split(' ');
         fetch(api.register, {
@@ -66,23 +98,23 @@ const Auth = (props) => {
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({ name: name, surname: surname, patronymic: patronymic, email: logIn, password: password})
-        });
+        })
     };
 
-    const handleSwitchForm = (e) => {
-        let labelSwitcher = document.getElementById('switcher-label');
-        let registrationForm = document.querySelector(`.${styles.registration}`);
-        let loginForm = document.querySelector(`.${styles.login}`);
-        loginForm.classList.toggle(styles.active);
-        registrationForm.classList.toggle(styles.active);
-        console.log(e.target.checked);
-        if (e.target.checked) {
-            labelSwitcher.textContent = 'Регистрация';
-        }
-        else {
-            labelSwitcher.textContent = 'Вход';
-        }
-    };
+    // const handleSwitchForm = (e) => {
+    //     let labelSwitcher = document.getElementById('switcher-label');
+    //     let registrationForm = document.querySelector(`.${styles.registration}`);
+    //     let loginForm = document.querySelector(`.${styles.login}`);
+    //     loginForm.classList.toggle(styles.active);
+    //     registrationForm.classList.toggle(styles.active);
+    //     console.log(e.target.checked);
+    //     if (e.target.checked) {
+    //         labelSwitcher.textContent = 'Регистрация';
+    //     }
+    //     else {
+    //         labelSwitcher.textContent = 'Вход';
+    //     }
+    // };
 
     return (
         <div className={ styles.form }>
@@ -115,37 +147,19 @@ const Auth = (props) => {
                     <p id="registration-email-message"></p>
                     <button onClick={ handleRegistration }>Зарегистрироваться</button>
                 </form>
-                <ValidatorComponent validate={
-                    {
-                    'login-login': {
-                        valid: [
-                            {
-                                regex: /^[A-Za-z]+@[a-z]+\.[a-z]+/, 
-                                message: 'Почта не соответствует формату **@*.*'
-                            }
-                        ]
-                    },
-                    'login-password': {
-                        valid: [
-                            {message: ''}
-                        ]
-                    }
-                }
-                }>
-                    <form className={ classNames(styles.login, styles.active) }>
-                        <label htmlFor="login-login">
-                            <p>Логин</p>
-                            <input id="login-login" type="login" onChange={ onChangeLogin } />
-                        </label>
-                        <p className={ 'ErrorMessage hidden' } id="login-login-message">dsadasdasdasdasd asdasdasdasdsadasdda sdasdasdasdasdas</p>
-                        <label htmlFor="login-password">
-                            <p>Пароль</p>
-                            <input id="login-password" type="password" />
-                        </label>
-                        <p className={ 'ErrorMessage hidden' } id="login-password-message"></p>
-                        <button onClick={ handleLogIn }>Войти</button>
-                    </form>
-                </ValidatorComponent>
+                <form className={ `${styles.login} ${styles.active}` }>
+                    <label htmlFor="login-login">
+                        <p>Email</p>
+                        <input id="login-login" type="login" onChange={ onChangeLogin } />
+                    </label>
+                    <p className={ 'ErrorMessage hidden' } id="login-login-message"></p>
+                    <label htmlFor="login-password">
+                        <p>Пароль</p>
+                        <input id="login-password" type="password" onChange={ onChangePassword } />
+                    </label>
+                    <p className={ 'ErrorMessage hidden' } id="login-password-message"></p>
+                    <button name='submitter' onClick={ handleLogIn } className={ 'user-button' }>Войти</button>
+                </form>
             </div>
         </div>
     );

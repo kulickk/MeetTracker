@@ -1,0 +1,102 @@
+.content {
+    padding: 50px 80px;
+}
+
+.meetingsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #353535;
+    padding: 25px;
+    gap: 25px;
+    border-radius: 30px;
+    overflow: auto;
+    height: 450px;
+    align-content: flex-start;
+}
+
+.meetingsContainer::-webkit-scrollbar {
+    width: 0;
+}
+
+.meetingCard {
+    width: 252px;
+    height: 89px;
+    background: #282828;
+    border-radius: 30px;
+    padding: 30px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.meetingTitle {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 29.26px;
+    margin: 0;
+    color: #FFFFFF;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.meetingDateContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.meetingDate {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24.38px;
+    color: #FFFFFF;
+    margin: 0;
+    align-self: center;
+}
+
+.cardButtons {
+    display: flex;
+    gap: 20px;
+}
+
+.downloadButton {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3px;
+}
+
+.downloadButton:hover {
+    background-color: #282828;
+}
+
+.downloadButton:hover svg path {
+    fill: #F59D0E;
+}
+
+
+.deleteButton {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    background-color: #FF5100;
+}
+
+.deleteButton:hover {
+    background-color: #282828;
+}
+
+.deleteButton:hover svg path {
+    fill: #FF5100;
+}
+
+.buttonsContainer {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}

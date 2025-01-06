@@ -1,0 +1,59 @@
+.accountForm {
+    display: flex;
+    padding: 50px 80px;
+    flex-direction: column;
+    height: 602px;
+    justify-content: space-between;
+}
+
+.accountFormLabels {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+}
+
+.accountFormLabels .accountFormLabel {
+    margin-top: 25px;
+}
+
+.accountFormLabels .accountFormLabel:nth-child(1) {
+    margin-top: 0;
+}
+
+.accountFormLabel {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.accountFormLabelTitle {
+    line-height: 29.26px;
+    color: #FFFFFF;
+    display: inline;
+    margin: 0;
+}
+
+.accountFormLabelInput {
+    background-color: #282828;
+    outline: none;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.5px;
+    width: 328px;
+    padding-left: 20px;
+    color: #FFFFFF;
+    height: 100%;
+    margin-left: auto;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.errorMessage {
+    margin-left: 150px;
+}

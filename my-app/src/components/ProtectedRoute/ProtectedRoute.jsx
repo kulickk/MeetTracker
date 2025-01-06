@@ -1,5 +1,5 @@
 import { Route, Navigate } from "react-router-dom"
-import routing from "../../routing";
+import routing from "../../utils/links/routing";
 
 
 const ProtectedRoute = ({ user, children }) => {

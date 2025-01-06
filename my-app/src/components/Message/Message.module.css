@@ -1,0 +1,42 @@
+.messageContainer {
+    box-shadow: 0px 0px 20px 0px rgba(245, 157, 14, 1);
+    border: 2px solid rgba(245, 157, 14, 1);
+    border-radius: 22px;
+    padding: 20px 30px;
+    height: 61px;
+    /* max-width: 700px; */
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.messageTitle, .messageText {
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+}
+
+.messageTitle {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.38px;
+}
+
+.messageText {
+    font-size: 20px;
+    line-height: 24.38px;
+    white-space: nowrap;
+}
+
+.messageOkBtn {
+    align-self: center;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.38px;
+}

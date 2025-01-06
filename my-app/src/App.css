@@ -1,3 +1,24 @@
+label input.inputValidationError {
+    border: 2px solid rgba(255, 81, 0, 1)
+}
+
+.hidden {
+    display: none;
+}
+
+.ErrorMessage {
+    width: 320px;
+    margin: 0;
+    margin-left: 120px;
+    margin-top: 10px;
+    text-wrap: wrap;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.5px;
+    color: rgba(255, 81, 0, 1);
+}
+
+/* Buttons */
 button {
     height: 44px;
     border: unset;
@@ -9,9 +30,14 @@ button {
     font-size: 20px;
     font-weight: 700;
     line-height: 24.38px;
-    transition: all 0.9s;
+    transition: all 0.3s;
 }
 
+button svg path {
+    transition: all 0.3s;
+}
+
+/* Svg inside */
 .admin-panel-button {
     justify-content: center;
     align-items: center;
@@ -26,16 +52,9 @@ button {
     padding-right: 20px;
 }
 
+/* Ban */
 .ban-button {
     background-color: #FF5100;
-}
-
-.set-admin-button {
-    background-color: #7E0EF5;
-}
-
-.user-button {
-    color: #282828;
 }
 
 .ban-button:hover {
@@ -43,22 +62,83 @@ button {
     color: #FF5100;
 }
 
-label input.inputValidationError {
-    border: 2px solid rgba(255, 81, 0, 1)
+.ban-button:hover svg path {
+    fill: #FF5100;
 }
 
-.hidden {
-    display: none;
+/* Set admin */
+.set-admin-button {
+    background-color: #7E0EF5;
 }
 
-.ErrorMessage {
-    width: 320px;
-    margin: 0;
-    margin-left: 120px;
-    margin-top: -20px;
-    text-wrap: wrap;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 19.5px;
-    color: rgba(255, 81, 0, 1);
+.set-admin-button:hover {
+    background-color: #FFFFFF;
+    color: #7E0EF5;
+}
+
+.set-admin-button:hover svg path {
+    fill: #7E0EF5;
+}
+
+/* User */
+.user-button {
+    color: #282828;
+}
+
+.user-button:hover {
+    background-color: #282828;
+    color: #F59D0E;
+}
+
+.user-button:hover svg path {
+    fill: #F59D0E;
+}
+
+/* Logout */
+.logout-button {
+    background-color: #FF5100;
+    color: #FFFFFF;
+}
+
+.logout-button:hover {
+    background-color: #FFFFFF;
+    color: #FF5100;
+}
+
+.logout-button:hover svg path {
+    fill: #FF5100;
+}
+
+/* Delete */
+.delete-button {
+    background-color: #FF5100;
+    color: #FFFFFF;
+}
+
+.delete-button:hover {
+    background-color: #FFFFFF;
+    color: #FF5100;
+}
+
+.delete-button:hover svg path {
+    fill: #FF5100;
+}
+
+/* Send */
+.send-button {
+    background-color: #F59D0E;
+    color: #282828;    
+}
+
+.send-button:hover {
+    background-color: #282828;
+    color: #F59D0E;
+}
+
+.send-button:hover svg path:nth-child(1) {
+    fill: #F59D0E;
+}
+
+.send-button:hover svg path:nth-child(2) {
+    stroke: #F59D0E;
 }
