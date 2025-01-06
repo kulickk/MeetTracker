@@ -6,7 +6,11 @@ from src.admin.routers import router as admin_router
 from src.user.routers import router as user_router
 
 app = FastAPI()
-origins = ["http://localhost:8000"]
+origins = [
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://frontend-app:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,4 +25,4 @@ app.include_router(user_router)
 
 # if __name__ == "__main__":
 #     uvicorn.run(app, host="localhost", port=8000)
-#uvicorn main:app --reload --port=8000 --host=localhost
+# uvicorn main:app --reload --port=8000 --host=localhost

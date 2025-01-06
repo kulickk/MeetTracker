@@ -73,5 +73,20 @@ services:
             - driver: nvidia
               count: all
               capabilities: [ gpu ]
+  frontend-app:
+    volumes:
+      - ./my-app:/app
+    container_name: frontend-app
+    build:
+      context: ./my-app
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    networks:
+      - back-tier
+    depends_on:
+      - whisper
+
 networks:
   back-tier: {}
