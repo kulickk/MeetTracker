@@ -13,7 +13,7 @@ from src.database import Summary as DB_Summary
 
 
 class Summary:
-    def __init__(self, file_name: str, db: AsyncSession):
+    def __init__(self, file_name: str, db: AsyncSession = None):
         self.file_name = file_name
         self.file_path: str = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'files', f'{file_name}.json')
         self.conversation_string = Summary.load_conversation_data(self)
@@ -91,6 +91,7 @@ class Summary:
         mistakes_count = 0
         for i in range(iterations):
             response = requests.post(self.ollama_endpoint, json=self.ollama_data)
+            print(response.json())
             response_text = response.json()['response']
             if response_text:
                 formatted_dict = await self.get_summary_formatted_dict(response_text)

@@ -13,7 +13,7 @@ from src.file_service import FileService
 from src.whisper.summary import Summary
 from src.whisper.whisper_service import WhisperService
 from src.auth.routers import oauth2_scheme
-
+from pathlib import Path
 router = APIRouter()
 dir = os.path.dirname(os.path.dirname(__file__))
 
@@ -79,9 +79,9 @@ async def process_audio(
     result = await whisper.run()
     transcription = await FileService.prepare_json(result)
     transcription = json.dumps(transcription, ensure_ascii=False, indent=4)
-
+    file_path = Path(dir) / "files" / f"{file_name}.json"
     async with aiofiles.open(
-        f"{dir}\\files\\{file_name}.json", "w", encoding="utf-8"
+        file_path, "w", encoding="utf-8"
     ) as f:
         await f.write(transcription)
 
@@ -108,7 +108,7 @@ async def get_summary(
     file_name: str,
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
-    tg_bot=Depends(get_telegram_bot),
+    # tg_bot=Depends(get_telegram_bot),
 ):
     summary = Summary(file_name, db)
 
@@ -117,9 +117,9 @@ async def get_summary(
         token, json.dumps(summarization, ensure_ascii=False, indent=4)
     )
 
-    tg_id = await DatabaseService(db).get_tg_id(token)
-    background_tasks.add_task(
-        tg_bot.send_message, tg_id, f"Сгенерирована новая выжимка из файла: {file_name}"
-    )
+    # tg_id = await DatabaseService(db).get_tg_id(token)
+    # background_tasks.add_task(
+    #     tg_bot.send_message, tg_id, f"Сгенерирована новая выжимка из файла: {file_name}"
+    # )
 
     return summarization
