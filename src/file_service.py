@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import UploadFile
 from sqlalchemy import insert
 from src.database import File as DB_File
-from src.whisper.database_service import DatabaseService
+from src.database_service import DatabaseService
 
 
 class FileService:
@@ -40,6 +40,7 @@ class FileService:
     async def save_bytes_file(self, file_name):
         file_name = file_name.split('.')[0]
         file_path = os.path.join(self.whisper_dir, "files", f"{file_name}.wav")
+        print(file_path)
         audio_stream = io.BytesIO(self.byte_file)
         audio = AudioSegment.from_file(audio_stream)
         if audio.channels == 2:
@@ -62,7 +63,8 @@ class FileService:
         new_file = {
             "user_id": user_id,
             "file_name": self.hash_name,
-            "status": "PENDING",
+            "transcription_status": "PENDING",
+            "summary_status": "PENDING",
             "file_type": self.file_type
         }
 

@@ -1,0 +1,77 @@
+services:
+  postgres_db:
+    image: postgres:17.2
+    container_name: "postgres_db"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Nikita8321
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - back-tier
+    expose:
+      - 5432
+    volumes:
+      - .postgres:/var/lib/postgres/data
+  meet-tracker:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    networks:
+      - back-tier
+    restart: always
+    depends_on:
+      - postgres_db
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+  whisper:
+    build:
+      context: ./src
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    ports:
+      - "8081:8081"
+    networks:
+      - back-tier
+    restart: always
+    depends_on:
+      - postgres_db
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+  ollama:
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: ollama/ollama:latest
+    expose:
+      - "11434"
+    ports:
+      - 7869:7869
+      - 11434:11434
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    networks:
+      - back-tier
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+networks:
+  back-tier: {}

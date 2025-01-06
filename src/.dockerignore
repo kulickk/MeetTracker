@@ -1,0 +1,13 @@
+__pycache__/
+venv/
+node_modules/
+build/
+dist/
+main.py
+
+*.log
+*.pyc
+*.pyo
+*.pyd
+*.db
+.DS_Store

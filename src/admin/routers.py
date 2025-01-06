@@ -1,9 +1,11 @@
 import random
 import string
 from pydantic import EmailStr
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.user_service import UserService
+from src.notifications.gmail_sender import GmailSender
 from src.admin.admin_service import AdminService
 from src.database import get_db
 from src.auth.status_codes import StatusCodes as status_code
@@ -24,7 +26,7 @@ async def generate_random_password():
 
 
 @router.post("/register", responses=status_code.register)
-async def register_admin(user: UserBaseSchema, token: str = Depends(oauth2_scheme),
+async def register_admin(background_tasks : BackgroundTasks, user: UserBaseSchema, token: str = Depends(oauth2_scheme),
                          db: AsyncSession = Depends(get_db)):
     admin_service = AdminService(db)
     await admin_service.check_admin(token)
@@ -36,7 +38,13 @@ async def register_admin(user: UserBaseSchema, token: str = Depends(oauth2_schem
         email=user.email,
         password=random_password)
 
-    return await register(new_user, db)
+    user_service = UserService(db)
+    result = await user_service.create_user(new_user)
+    
+    email_info = GmailSender(new_user.email, new_user.password)
+    background_tasks.add_task(email_info.send_reg_email, new_user.email)
+    
+    return result
 
 
 @router.get('/get_users')

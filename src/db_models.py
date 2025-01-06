@@ -29,7 +29,8 @@ file = Table(
     Column("user_id", Integer, ForeignKey('user.id'), nullable=False),
     Column("file_name", String, nullable=False),
     Column("file_type", String, nullable=False),
-    Column("status", String, nullable=False),
+    Column("transcription_status", String, nullable=False),
+    Column("summary_status", String, nullable=False),
     Column("uploaded_at", TIMESTAMP, default=datetime.utcnow),
     Column("updated_at", TIMESTAMP, default=datetime.utcnow)
 )
