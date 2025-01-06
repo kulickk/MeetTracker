@@ -4,8 +4,8 @@ from pydantic import EmailStr
 from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.user_service import UserService
-from notifications.gmail_sender import GmailSender
+from src.auth.user_service import UserService
+from src.notifications.gmail_sender import GmailSender
 from src.admin.admin_service import AdminService
 from src.database import get_db
 from src.auth.status_codes import StatusCodes as status_code
