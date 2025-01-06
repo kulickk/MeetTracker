@@ -110,14 +110,15 @@ async def check_file(
     db: AsyncSession = Depends(get_db),
 ):
     db_service = DatabaseService(db)
-    file_id, status = await db_service.get_file_status(token, file_name)
+    file_id, transcription_status, summary_status = await db_service.get_file_status(token, file_name)
     transcription = await db_service.get_transcription(token, file_name)
     summarization = await db_service.get_summarization(token, file_name)
     uploaded_at, updated_at, meet_type = await db_service.get_file_stats(
         token, file_name
     )
     return {
-        "status": status,
+        "transcription_status": transcription_status,
+        "summary_status": summary_status,
         "meet_name": file_name,
         "meet_type": meet_type,
         "transcription": (

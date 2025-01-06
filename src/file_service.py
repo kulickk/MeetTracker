@@ -63,7 +63,8 @@ class FileService:
         new_file = {
             "user_id": user_id,
             "file_name": self.hash_name,
-            "status": "PENDING",
+            "transcription_status": "PENDING",
+            "summary_status": "PENDING",
             "file_type": self.file_type
         }
 
