@@ -87,11 +87,11 @@ async def process_audio(
 
     await whisper.add_to_db(token, transcription)
 
-    # summary = Summary(file_name, db)
-    # summarization = await summary.get_summary_from_transcription()
-    # summarization = json.dumps(summarization, ensure_ascii=False, indent=4)
+    summary = Summary(file_name, db)
+    summarization = await summary.get_summary_from_transcription()
+    summarization = json.dumps(summarization, ensure_ascii=False, indent=4)
 
-    # await summary.add_to_db(token, summarization)
+    await summary.add_to_db(token, summarization)
 
     # tg_id = await DatabaseService(db).get_tg_id(token)
     # background_tasks.add_task(

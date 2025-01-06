@@ -49,29 +49,29 @@ services:
       - .env
     volumes:
       - ./src:/app/src
-  # ollama:
-  #   volumes:
-  #     - ./ollama/ollama:/root/.ollama
-  #   container_name: ollama
-  #   pull_policy: always
-  #   tty: true
-  #   restart: unless-stopped
-  #   image: ollama/ollama:latest
-  #   ports:
-  #     - 7869:7869
-  #     - 11434:11434
-  #   networks:
-  #     - back-tier
-  #   environment:
-  #     - OLLAMA_KEEP_ALIVE=24h
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: all
-  #             capabilities: [ gpu ]
-  #   command: ollama pull kulick/t-lite:latest && ollama serve
+  ollama-server:
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+    container_name: ollama-server
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    build:
+      context: ./src/whisper
+    ports:
+      - 7869:7869
+      - 11434:11434
+    networks:
+      - back-tier
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     
 
       # ollama:
