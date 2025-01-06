@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from fastapi import status
 from typing import Optional
 from typing import Dict
-from config import SECRET_KEY, ALGORITHM
+from src.config import SECRET_KEY, ALGORITHM
 import jwt
 
 
