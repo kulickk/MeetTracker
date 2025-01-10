@@ -1,11 +1,15 @@
-FROM node:22-alpine
+FROM node:latest
 
 WORKDIR /app
-ENV NODE_PATH=/app
+
+COPY package.json package-lock.json /app/
+
+RUN npm install react-scripts
+RUN npm update
 
 COPY . /app/
+RUN npm run build
+RUN npm install -g serve
 
-RUN npm install
-EXPOSE 8000
 
-RUN npm start
+CMD ["serve", "-s", "build"]

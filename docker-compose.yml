@@ -17,6 +17,7 @@ services:
   meet-tracker:
     build:
       context: .
+    container_name: "meet-tracker"
     ports:
       - "8000:8000"
     networks:
@@ -74,19 +75,17 @@ services:
               count: all
               capabilities: [ gpu ]
   frontend-app:
-    volumes:
-      - ./my-app:/app
     container_name: frontend-app
     build:
       context: ./my-app
     ports:
-      - 3000:3000
+      - "3000:3000"
     expose:
       - 3000
     networks:
       - back-tier
     depends_on:
-      - whisper
+      - postgres_db
 
 networks:
   back-tier: {}
