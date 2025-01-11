@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Header from '../../components/Header/Header';
 import styles from './MainPage.module.css'
+import api from "../../utils/links/api";
 
 import { getMeets, sendFile } from './utils/MainPageRequests';
 import { FileUploadForm, Meetings } from './utils/MainPageUtils';

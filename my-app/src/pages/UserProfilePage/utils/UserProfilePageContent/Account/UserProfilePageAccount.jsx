@@ -4,7 +4,7 @@ import { fullLogout } from '../../../../../utils/userData/userData';
 import changeAccountInfo from './utils/UserProfilePageAccountRequests';
 import routing from '../../../../../utils/links/routing';
 import {validateForm, onChangeValidatedInput} from '../../../../../utils/validation/validateForm.js';
-import { nameExp, surnameExp, patronymicExp } from '../../../../../utils/validation/regExp.js';
+import { nameExp, surnameExp, patronymicExp, passwordExp } from '../../../../../utils/validation/regExp.js';
 
 import styles from './UserProfilePageAccount.module.css';
 
@@ -51,12 +51,25 @@ const Account = (props) => {
             'account-old-password': {
                 valid: [
                     {
-                        regex: /\w+/,
-                        message: 'Нужно ввести пароль'
+                        regex: passwordExp,
+                        message: 'Нужно ввести текущий пароль'
                     }
                 ],
                 params: {
-                    requered: true
+                    requered: false,
+                    requeredFor: 'account-new-password'
+                }
+            },
+            'account-new-password': {
+                valid: [
+                    {
+                        regex: passwordExp,
+                        message: 'Нужно ввести новый пароль'
+                    }
+                ],
+                params: {
+                    requered: false,
+                    requeredIn: 'account-old-password'
                 }
             }
         };
@@ -66,8 +79,8 @@ const Account = (props) => {
                 surname: form.querySelector('input[name="surname"]').value,
                 name: form.querySelector('input[name="name"]').value,
                 patronymic: form.querySelector('input[name="patronymic"]').value,
-                oldPassword: form.querySelector('input[name="old-password"]').value,
-                newPassword: form.querySelector('input[name="new-password"]').value
+                'old_password': form.querySelector('input[name="old-password"]').value,
+                'new_password': form.querySelector('input[name="new-password"]').value
             };
             Object.keys(data).forEach((key) => {
                 if (!data[key]) {
@@ -109,9 +122,11 @@ const Account = (props) => {
                     <p className={ styles.accountFormLabelTitle }>Пароль</p>
                     <input name='old-password' className={ styles.accountFormLabelInput } id="account-old-password" type="password" placeholder="Введите старый пароль..." autoComplete='off' onChange={ onChangeInput }/>
                 </label>
+                <p className={ `ErrorMessage hidden ${styles.errorMessage}` } id="account-old-password-message"></p>
                 <label className={ styles.accountFormLabel } htmlFor="account-password">
                     <input name='new-password' className={ styles.accountFormLabelInput } id="account-new-password" type="password" placeholder="Введите новый пароль..." autoComplete='off' onChange={ onChangeInput }/>
                 </label>
+                <p className={ `ErrorMessage hidden ${styles.errorMessage}` } id="account-new-password-message"></p>
             </div>
             <div className={ styles.buttons }>
                 <button name='submitter' className={ `admin-panel-button user-button` } onClick={ handleChangeAccountInfo }>
