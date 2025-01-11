@@ -5,10 +5,58 @@ import changeAccountInfo from './utils/UserProfilePageAccountRequests';
 import routing from '../../../../../utils/links/routing';
 import {validateForm, onChangeValidatedInput} from '../../../../../utils/validation/validateForm.js';
 import { nameExp, surnameExp, patronymicExp } from '../../../../../utils/validation/regExp.js';
+import api from '../../../../../utils/links/api.js';
 
 import styles from './UserProfilePageAccount.module.css';
 
+const showTelegramIcon = (telegramId, setTelegramId) => {
+
+    const handleLinkTg = async () => {
+        try {
+            const response = await fetch(api.usersGetTgLink, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                fetch(api.usersMe, {
+                    credentials: 'include'
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                }).then((data) => {
+                    if (data['telegram_id']) {
+                        setTelegramId(data['telegram_id']);
+                    }
+                });
+                const data = await response.json();
+                const link = document.createElement('a');
+                link.style.display = 'none';
+                link.href = data.telegram_link;
+                link.click();
+                link.remove();
+            }
+        } catch {
+
+        }
+    };
+
+    if (telegramId) {
+        return (
+            <button onClick={ (e) => e.preventDefault() } className={ `admin-panel-button telegram-button_ready ${styles.telegramButton}` }>
+                Привязан
+            </button>
+        );
+    } else {
+        return (
+            <button onClick={ handleLinkTg } className={ `admin-panel-button telegram-button_not-ready ${styles.telegramButton}` }>
+                Привязать
+            </button>
+        );
+    }
+};
+
 const Account = (props) => {
+    console.log(props.telegram);
     const navigate = useNavigate();
 
     const handleChangeAccountInfo = (e) => {
@@ -115,13 +163,20 @@ const Account = (props) => {
             </div>
             <div className={ styles.buttons }>
                 <button name='submitter' className={ `admin-panel-button user-button` } onClick={ handleChangeAccountInfo }>
-                    <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6.28568 9H10.7144V12.375H6.28568V9Z" fill="#282828"/>
-                        <path d="M1.93598 13.0822C2.10413 12.6551 2.51125 12.375 2.96399 12.375H14.036C14.4888 12.375 14.8959 12.6551 15.064 13.0822L16.4621 16.6337C16.7204 17.2898 16.2368 18 15.5316 18H1.46836C0.763236 18 0.279578 17.2898 0.53787 16.6337L1.93598 13.0822Z" fill="#282828"/>
-                        <path d="M14.036 5.625C14.036 8.7316 11.5575 11.25 8.50006 11.25C5.44264 11.25 2.96411 8.7316 2.96411 5.625C2.96411 2.5184 5.44264 0 8.50006 0C11.5575 0 14.036 2.5184 14.036 5.625Z" fill="#282828"/>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9 16C12.866 16 16 12.866 16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16ZM9 13C11.2091 13 13 11.2091 13 9C13 6.79086 11.2091 5 9 5C6.79086 5 5 6.79086 5 9C5 11.2091 6.79086 13 9 13Z" fill="#282828"/>
+                        <path d="M7 1C7 0.447715 7.44772 0 8 0H10C10.5523 0 11 0.447715 11 1V3H7V1Z" fill="#282828"/>
+                        <path d="M15 11V7H17C17.5523 7 18 7.44772 18 8V10C18 10.5523 17.5523 11 17 11H15Z" fill="#282828"/>
+                        <path d="M1 11C0.447715 11 0 10.5523 0 10V8C0 7.44772 0.447715 7 1 7H3V11H1Z" fill="#282828"/>
+                        <path d="M7 15H11V17C11 17.5523 10.5523 18 10 18H8C7.44772 18 7 17.5523 7 17V15Z" fill="#282828"/>
+                        <path d="M12 14.8284L14.8284 12L16.2426 13.4142C16.6332 13.8047 16.6332 14.4379 16.2426 14.8284L14.8284 16.2426C14.4379 16.6332 13.8047 16.6332 13.4142 16.2426L12 14.8284Z" fill="#282828"/>
+                        <path d="M1.70711 4.53553C1.31658 4.14501 1.31658 3.51184 1.70711 3.12132L3.12132 1.70711C3.51184 1.31658 4.14501 1.31658 4.53553 1.70711L5.94975 3.12132L3.12132 5.94975L1.70711 4.53553Z" fill="#282828"/>
+                        <path d="M13.4142 1.70711C13.8047 1.31658 14.4379 1.31658 14.8284 1.70711L16.2426 3.12132C16.6332 3.51184 16.6332 4.14501 16.2426 4.53553L14.8284 5.94975L12 3.12132L13.4142 1.70711Z" fill="#282828"/>
+                        <path d="M3.12132 12L5.94975 14.8284L4.53553 16.2426C4.14501 16.6332 3.51184 16.6332 3.12132 16.2426L1.70711 14.8284C1.31658 14.4379 1.31658 13.8047 1.70711 13.4142L3.12132 12Z" fill="#282828"/>
                     </svg>
                     Сохранить изменения
                 </button>
+                { showTelegramIcon(props.telegram.telegramId) }
                 <button className={ `admin-panel-button logout-button` } onClick={ handleLogOut }>
                     <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4.39699e-05 1.10976L7.86845 3.087C8.9487 3.35845 9.70653 4.33406 9.70653 5.4533V15.0597C9.70653 16.6465 8.22292 17.8108 6.69137 17.426L4.39699e-05 15.7445V1.10976Z" fill="white"/>

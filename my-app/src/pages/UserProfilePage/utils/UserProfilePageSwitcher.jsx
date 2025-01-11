@@ -25,6 +25,7 @@ const ContentSwitcher = (props) => {
         users={ props.users } 
         setUsers={ props.setUsers } 
         userData={ props.userData }
+        telegram={ props.telegram }
         // Сообщения
         shown={ props.shown }
         messageInfo={ props.messageInfo }/>;

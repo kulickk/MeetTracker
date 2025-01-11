@@ -92,3 +92,7 @@
     padding-top: 20px;
     border-top: solid 2px rgba(255, 255, 255, 0.1);
 }
+
+.againButton {
+    margin-left: auto;
+}

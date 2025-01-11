@@ -1,3 +1,5 @@
+import { getMeets } from "../../../../../MainPage/utils/MainPageRequests";
+
 import api from "../../../../../../utils/links/api"
 
 
@@ -25,4 +27,19 @@ const downloadFile = async (filename, filetype) => {
     }
 };
 
-export default downloadFile;
+const deleteFile = async (filename, setter, navigate) => {
+    try {
+        const response = await fetch(api.usersDeleteFile + filename, {
+            method: 'delete',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            console.log('file-deleted');
+            getMeets(setter, navigate)
+        }
+    } catch {
+
+    }
+};
+
+export { downloadFile, deleteFile };

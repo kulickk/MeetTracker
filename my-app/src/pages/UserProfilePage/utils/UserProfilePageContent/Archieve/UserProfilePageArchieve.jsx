@@ -6,7 +6,7 @@ import { getMeets } from "../../../../MainPage/utils/MainPageRequests";
 
 const Archieve = (props) => {
     const [meetings, setMeetings] = useState(undefined);
-    const navigate = useNavigate;
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!meetings) {
@@ -15,7 +15,7 @@ const Archieve = (props) => {
     
     return (
         <div>
-            <ArchieveMeetings meetings={ meetings }/>
+            <ArchieveMeetings meetings={ meetings } setMeetings={ setMeetings } navigate={ navigate }/>
         </div>
     );
 };
