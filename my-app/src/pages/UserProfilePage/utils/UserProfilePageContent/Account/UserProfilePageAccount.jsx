@@ -9,8 +9,7 @@ import api from '../../../../../utils/links/api.js';
 
 import styles from './UserProfilePageAccount.module.css';
 
-const showTelegramIcon = (telegramId, setTelegramId) => {
-
+const showTelegramIcon = (telegram) => {
     const handleLinkTg = async () => {
         try {
             const response = await fetch(api.usersGetTgLink, {
@@ -25,7 +24,7 @@ const showTelegramIcon = (telegramId, setTelegramId) => {
                     }
                 }).then((data) => {
                     if (data['telegram_id']) {
-                        setTelegramId(data['telegram_id']);
+                        telegram.setTelegramId(data['telegram_id']);
                     }
                 });
                 const data = await response.json();
@@ -40,7 +39,7 @@ const showTelegramIcon = (telegramId, setTelegramId) => {
         }
     };
 
-    if (telegramId) {
+    if (telegram.telegramId) {
         return (
             <button onClick={ (e) => e.preventDefault() } className={ `admin-panel-button telegram-button_ready ${styles.telegramButton}` }>
                 Привязан
@@ -176,7 +175,7 @@ const Account = (props) => {
                     </svg>
                     Сохранить изменения
                 </button>
-                { showTelegramIcon(props.telegram.telegramId) }
+                { showTelegramIcon(props.telegram) }
                 <button className={ `admin-panel-button logout-button` } onClick={ handleLogOut }>
                     <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4.39699e-05 1.10976L7.86845 3.087C8.9487 3.35845 9.70653 4.33406 9.70653 5.4533V15.0597C9.70653 16.6465 8.22292 17.8108 6.69137 17.426L4.39699e-05 15.7445V1.10976Z" fill="white"/>

@@ -133,16 +133,21 @@ const UserProfilePage = (props) => {
                             <a className={ styles.active } name="account" href="admin/account" onClick={ onClickNavigation }>Аккаунт</a>
                             <a name="archieve" href="admin/archieve" onClick={ onClickNavigation }>Архив</a>
                         </div>
-                        <ContentSwitcher
-                        // Контент
-                        content={ currentContent }
-                        // Пользовательская инфомация
-                        users={ users } 
-                        setUsers={ setUsers } 
-                        userData={ props.userData }
-                        // Сообщения
-                        shown={ messageShownObj }
-                        messageInfo={ messageInfoObj }/>
+                        <div className={ styles.panelContent }>
+                            <ContentSwitcher
+                            // Контент
+                            content={ currentContent }  
+                            // Пользовательская инфомация
+                            users={ users } 
+                            setUsers={ setUsers } 
+                            navigate={ navigate } 
+                            is_Admin={ is_Admin } 
+                            userData={ props.userData }
+                            telegram={ {telegramId:telegramId, setTelegramId:setTelegramId} }
+                            // Сообщения
+                            shown={ messageShownObj }
+                            messageInfo={ messageInfoObj }/>
+                        </div>
                     </div>
                 </div>
             </div>
