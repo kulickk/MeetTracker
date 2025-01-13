@@ -1,6 +1,10 @@
+.abc {
+    display: grid;
+}
+
 .page {
-    display: flex;
     justify-content: center;
+    display: flex;
     height: 90%;
 }
 
@@ -131,10 +135,6 @@
 
 .fileFormMeetingName:focus {
     outline: none;
-}
-
-.fileFormFilesContainer {
-    
 }
 
 .fileFormFilesInput {

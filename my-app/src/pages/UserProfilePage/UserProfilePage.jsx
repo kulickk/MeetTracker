@@ -126,7 +126,12 @@ const UserProfilePage = (props) => {
         <Header userName={ props.userData.userName.userName }/>
         <div className={ styles.page }>
             <div>
-                <p className={ styles.title }>Панель пользователя</p>
+                <div className={ styles.titleContainer }>
+                    <p className={ styles.title }>Панель пользователя</p>
+                    <Message
+                    shown={ messageShownObj }
+                    messageInfo={ messageInfoObj }/>
+                </div>
                 <div className={ styles.panel }>
                     <div className={ styles.content }>
                         <div className={ styles.contentNavigation }>
