@@ -111,6 +111,7 @@ const Account = (props) => {
                     {
                         regex: passwordExp,
                         message: 'Длина нового пароле не менее 8'
+
                     }
                 ],
                 params: {
@@ -127,6 +128,7 @@ const Account = (props) => {
                 patronymic: form.querySelector('input[name="patronymic"]').value,
                 old_password: form.querySelector('input[name="old-password"]').value,
                 new_password: form.querySelector('input[name="new-password"]').value
+
             };
             Object.keys(data).forEach((key) => {
                 if (!data[key]) {
