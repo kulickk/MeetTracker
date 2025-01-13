@@ -17,7 +17,7 @@ const getMeets = async (setter, navigate) => {
         const data = await response.json();
         setter(data['meets']);
     } catch (err) {
-        console.log('Ошибка при запросе', err);
+        // console.log('Ошибка при запросе', err);
     }
 };
 

@@ -15,7 +15,9 @@ const api = {
     usersGetMeet: 'users/check-file',
     usersMe: 'users/me',
     downloadFile: 'users/download-file',
-    updateInfo: 'users/update-user-info'
+    updateInfo: 'users/update-user-info',
+    usersDeleteFile: 'users/delete-file/',
+    usersGetTgLink: 'users/generate-link-tg'
 };
 
 Object.keys(api).forEach((key) => {

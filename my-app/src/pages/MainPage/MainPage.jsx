@@ -33,12 +33,18 @@ const MainPage = (props) => {
         get: messageShown, 
         set: setMessageShown
     }
- 
+
     // Получаем все встречи 
+    useEffect(() => {
+        const intervalId = setInterval(getMeets, 10000, setMeetings, navigate);
+        return () => clearInterval(intervalId);
+    });
+
     useEffect(() => {
         if (!meetings) {
             getMeets(setMeetings, navigate);
-    }});
+        }
+    });
 
     const handleRemoveFile = (e) => {
         e.preventDefault();

@@ -142,3 +142,19 @@ button svg path {
 .send-button:hover svg path:nth-child(2) {
     stroke: #F59D0E;
 }
+
+/* Telegram */
+.telegram-button {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24.38px;
+    color: #FFFFFF;
+}
+
+.telegram-button_not-ready {
+    background: rgba(34, 145, 193, 1);
+}
+
+.telegram-button_ready {
+    background: rgba(68, 158, 35, 1);
+}

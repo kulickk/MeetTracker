@@ -5,7 +5,6 @@ const Speakers = (props) => {
     const getSpeakers = (speakers) => {
         if (speakers) {
             const speakersCards = Object.keys(speakers).map((key) => {
-                console.log(key);
                 return (
                     <div className={ styles.speakerContainer } key={ key }>
                         <p className={ styles.speakerTitle }>{ key }</p>

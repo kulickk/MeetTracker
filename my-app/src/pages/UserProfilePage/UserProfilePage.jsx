@@ -16,6 +16,7 @@ const UserProfilePage = (props) => {
     const [messageTitle, setMessageTitle] = useState('');
     const [messageText, setMessageText] = useState('');
     const [messageShown, setMessageShown] = useState(false);
+    const [telegramId, setTelegramId] = useState(null); 
     const navigate = useNavigate();
 
     const messageInfoObj = {
@@ -69,7 +70,12 @@ const UserProfilePage = (props) => {
             if (!response.ok) {
                 navigate(routing.authentidication);
           }
-        })
+          return response.json();
+        }).then((data) => {
+            if (data['telegram_id']) {
+                setTelegramId(data['telegram_id']);
+            }
+        });
       });
 
     if (is_Admin) {
@@ -88,7 +94,7 @@ const UserProfilePage = (props) => {
                         <div className={ styles.content }>
                             <div className={ styles.contentNavigation }>
                                 <a name="users" href="admin/users" onClick={ onClickNavigation }>Пользователи</a>
-                                <a name="config" href="admin/config" onClick={ onClickNavigation }>Конфигурации</a>
+                                {/* <a name="config" href="admin/config" onClick={ onClickNavigation }>Конфигурации</a> */}
                                 <a className={ styles.active } name="account" href="admin/account" onClick={ onClickNavigation }>Аккаунт</a>
                                 <a name="archieve" href="admin/archieve" onClick={ onClickNavigation }>Архив</a>
                             </div>
@@ -102,6 +108,7 @@ const UserProfilePage = (props) => {
                                 navigate={ navigate } 
                                 is_Admin={ is_Admin } 
                                 userData={ props.userData }
+                                telegram={ {telegramId:telegramId, setTelegramId:setTelegramId} }
                                 // Сообщения
                                 shown={ messageShownObj }
                                 messageInfo={ messageInfoObj }
@@ -119,23 +126,33 @@ const UserProfilePage = (props) => {
         <Header userName={ props.userData.userName.userName }/>
         <div className={ styles.page }>
             <div>
-                <p className={ styles.title }>Панель пользователя</p>
+                <div className={ styles.titleContainer }>
+                    <p className={ styles.title }>Панель пользователя</p>
+                    <Message
+                    shown={ messageShownObj }
+                    messageInfo={ messageInfoObj }/>
+                </div>
                 <div className={ styles.panel }>
                     <div className={ styles.content }>
                         <div className={ styles.contentNavigation }>
                             <a className={ styles.active } name="account" href="admin/account" onClick={ onClickNavigation }>Аккаунт</a>
                             <a name="archieve" href="admin/archieve" onClick={ onClickNavigation }>Архив</a>
                         </div>
-                        <ContentSwitcher
-                        // Контент
-                        content={ currentContent }
-                        // Пользовательская инфомация
-                        users={ users } 
-                        setUsers={ setUsers } 
-                        userData={ props.userData }
-                        // Сообщения
-                        shown={ messageShownObj }
-                        messageInfo={ messageInfoObj }/>
+                        <div className={ styles.panelContent }>
+                            <ContentSwitcher
+                            // Контент
+                            content={ currentContent }  
+                            // Пользовательская инфомация
+                            users={ users } 
+                            setUsers={ setUsers } 
+                            navigate={ navigate } 
+                            is_Admin={ is_Admin } 
+                            userData={ props.userData }
+                            telegram={ {telegramId:telegramId, setTelegramId:setTelegramId} }
+                            // Сообщения
+                            shown={ messageShownObj }
+                            messageInfo={ messageInfoObj }/>
+                        </div>
                     </div>
                 </div>
             </div>

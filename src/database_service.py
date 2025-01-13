@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.auth_service import AuthService
 from src.auth.user_service import UserService
 from src.database import User as DB_User, File as DB_File, Summary as DB_Summary
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 
 
 class DatabaseService:
@@ -149,3 +149,13 @@ class DatabaseService:
         except NoResultFound:
             raise ValueError("File not found")
         return uploaded_at, updated_at, meet_type
+
+    async def delete_file_from_db(self, token: str, file_name: str):
+        file_id = await self.get_file_id(token, file_name)
+        if file_id:
+            query = delete(DB_File).where(DB_File.id == file_id)
+
+            await self.db.execute(query)
+            await self.db.commit()
+            return {"status_code": 200, "detail": "success"}
+        return {"status_code": 400, "detail": "Can't delete the file"}

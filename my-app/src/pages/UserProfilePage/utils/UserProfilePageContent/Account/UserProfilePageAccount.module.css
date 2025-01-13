@@ -57,3 +57,11 @@
 .errorMessage {
     margin-left: 150px;
 }
+
+.telegramButton {
+    margin-left: -200px;
+    background-image: url('./../../../../../../public/assets/images/button_icons/tg.png');
+    background-repeat: no-repeat;
+    padding-left: 60px;
+    background-position: 20px 9px;
+}

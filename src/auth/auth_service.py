@@ -70,6 +70,7 @@ class AuthService:
                 "id": user.id,
                 "is_active": user.is_active,
                 "is_admin": user.is_admin,
+                "telegram_id": user.telegram_id,
                 "is_banned": user.is_banned,
                 "created_at": user.created_at,
                 "updated_at": user.updated_at,

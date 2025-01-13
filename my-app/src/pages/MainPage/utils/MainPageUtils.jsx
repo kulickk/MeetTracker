@@ -30,7 +30,7 @@ const audioExtensions = [
 ];
 
 const showMeetingStatus = (status) => {
-    if (status === 'pending') {
+    if (status === 'PENDING') {
         return (
             <svg className={ `${styles.statusIcon} ${styles.statusPending}` } width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M18 9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9C0 4.02944 4.02944 0 9 0V4C6.23858 4 4 6.23858 4 9C4 11.7614 6.23858 14 9 14C11.7614 14 14 11.7614 14 9H18Z" fill="url(#paint0_linear_1209_535)"/>
@@ -43,7 +43,7 @@ const showMeetingStatus = (status) => {
             </svg>
         );
     }
-    else if (status === 'done') {
+    else if (status === 'DONE') {
         return (
             <svg className={ styles.statusIcon } width="19" height="14" viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.44364 6.99996C0.662587 6.21892 0.662587 4.95259 1.44364 4.17154C2.22468 3.39049 3.49101 3.39049 4.27206 4.17154L9.92892 9.82839C10.71 10.6094 10.71 11.8758 9.92892 12.6568C9.14787 13.4379 7.88154 13.4379 7.10049 12.6568L1.44364 6.99996Z" fill="#49AB26"/>
@@ -52,7 +52,7 @@ const showMeetingStatus = (status) => {
 
         );
     }
-    else if (status === 'error') {
+    else if (status === 'ERROR') {
         return (
             <svg className={ styles.statusIcon } width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.612039 3.56722C-0.204013 2.75117 -0.204013 1.42809 0.612039 0.612039C1.42809 -0.204013 2.75117 -0.204013 3.56722 0.612039L15.388 12.4328C16.204 13.2488 16.204 14.5719 15.388 15.388C14.5719 16.204 13.2488 16.204 12.4328 15.388L0.612039 3.56722Z" fill="#FF5100"/>
@@ -70,29 +70,31 @@ const Meetings = (props) => {
                     if (meetings[index]) {
                         const [year, month, day] = meetings[index]['uploaded_at'].split('T')[0].split('-');
                         const date = [day, month, year].join('.');
-                        return (
-                            <Link to={ routing.mainPage + '/' + index + `/${value['meet_name']}` } key={ index }>
-                                <div className={ styles.meetingCard }>
+                        if (meetings[index]['summary_status'] === 'DONE') {
+                            return (
+                                <Link to={ routing.mainPage + '/' + index + `/${value['meet_name']}` } key={ index }>
+                                    <div className={ styles.meetingCard }>
+                                        <p className={ styles.meetingTitle }>{ meetings[index]['meet_name'] }</p>
+                                        <div className={ styles.meetingDateContainer }>
+                                            <p className={ styles.meetingDate }>{ date }</p>
+                                            { showMeetingStatus('DONE') }
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        }
+                        else {
+                            return (
+                                <div className={ styles.meetingCard } key={ index }>
                                     <p className={ styles.meetingTitle }>{ meetings[index]['meet_name'] }</p>
                                     <div className={ styles.meetingDateContainer }>
                                         <p className={ styles.meetingDate }>{ date }</p>
-                                        { showMeetingStatus('done') }
+                                        { showMeetingStatus(meetings[index]['summary_status']) }
                                     </div>
                                 </div>
-                            </Link>
-                        );
-                    }
-                    else {
-                        return (
-                            <div className={ styles.meetingCard } key={ index }>
-                                <p className={ styles.meetingTitle }>Название встречи {index}</p>
-                                <div className={ styles.meetingDateContainer }>
-                                    <p className={ styles.meetingDate }>23.11.2024</p>
-                                    { showMeetingStatus('pending') }
-                                </div>
-                            </div>
-                        );
-                    }
+                            );
+                        }
+                        }
                 }
             )
             return formattedMeetings;
@@ -143,14 +145,12 @@ const FileUploadForm = (props) => {
 
     const handleFilesChange = (e) => {
         const extention = e.target.files[0].name.split('.').pop().toUpperCase();
-        console.log(extention);
         if (videoExtensions.includes(extention) || audioExtensions.includes(extention)) {
             if (e.target.files[0].size < MAXFILESIZE) {
                 props.setFiles(e.target.files);
             }
         }
     };
-    console.log(props.files);
     if (props.files) {
         return (
             <>

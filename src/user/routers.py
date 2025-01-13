@@ -110,7 +110,9 @@ async def check_file(
     db: AsyncSession = Depends(get_db),
 ):
     db_service = DatabaseService(db)
-    file_id, transcription_status, summary_status = await db_service.get_file_status(token, file_name)
+    file_id, transcription_status, summary_status = await db_service.get_file_status(
+        token, file_name
+    )
     transcription = await db_service.get_transcription(token, file_name)
     summarization = await db_service.get_summarization(token, file_name)
     uploaded_at, updated_at, meet_type = await db_service.get_file_stats(
@@ -168,3 +170,17 @@ async def read_users_me(
     auth_service = AuthService(db)
     user = await auth_service.get_current_user(token)
     return user
+
+
+@router.delete("/delete-file/{file_name}")
+async def delete_file(
+    file_name: str,
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_db),
+):
+    db_service = DatabaseService(db)
+    try:
+        result = await db_service.delete_file_from_db(token, file_name)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Can't delete the file")
+    return result
