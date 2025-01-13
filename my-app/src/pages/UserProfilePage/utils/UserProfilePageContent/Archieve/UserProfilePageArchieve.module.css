@@ -37,6 +37,7 @@
     color: #FFFFFF;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 .meetingDateContainer {

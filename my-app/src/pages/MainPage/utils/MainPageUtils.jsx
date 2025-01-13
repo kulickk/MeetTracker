@@ -63,12 +63,10 @@ const showMeetingStatus = (status) => {
 };
 
 const Meetings = (props) => {
-    // console.log(props);
     const getMeetings = (meetings) => {
         if (meetings) {
             const formattedMeetings = meetings.map(
                 (value, index) => {
-                    console.log(meetings[index]);
                     if (meetings[index]) {
                         const [year, month, day] = meetings[index]['uploaded_at'].split('T')[0].split('-');
                         const date = [day, month, year].join('.');
@@ -147,14 +145,12 @@ const FileUploadForm = (props) => {
 
     const handleFilesChange = (e) => {
         const extention = e.target.files[0].name.split('.').pop().toUpperCase();
-        console.log(extention);
         if (videoExtensions.includes(extention) || audioExtensions.includes(extention)) {
             if (e.target.files[0].size < MAXFILESIZE) {
                 props.setFiles(e.target.files);
             }
         }
     };
-    console.log(props.files);
     if (props.files) {
         return (
             <>

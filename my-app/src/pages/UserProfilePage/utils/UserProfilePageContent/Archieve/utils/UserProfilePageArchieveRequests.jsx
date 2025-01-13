@@ -9,8 +9,6 @@ const downloadFile = async (filename, filetype) => {
             credentials: 'include'
         });
         if (response.ok) {
-            console.log('DOWNLOAD');
-            console.log(await response.data);
             const blob = await response.blob();
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -34,7 +32,6 @@ const deleteFile = async (filename, setter, navigate) => {
             credentials: 'include'
         })
         if (response.ok) {
-            console.log('file-deleted');
             getMeets(setter, navigate)
         }
     } catch {

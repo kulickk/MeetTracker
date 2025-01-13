@@ -35,7 +35,7 @@ const MainPage = (props) => {
 
     // Получаем все встречи 
     useEffect(() => {
-        const intervalId = setInterval(getMeets, 15000, setMeetings, navigate);
+        const intervalId = setInterval(getMeets, 10000, setMeetings, navigate);
         return () => clearInterval(intervalId);
     });
 

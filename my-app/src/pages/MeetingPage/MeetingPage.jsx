@@ -18,11 +18,9 @@ const MeetingPage = (props) => {
             getMeet(setMeeting, params.file_name, navigate);
         }
     }, []);
-    console.log(meeting);
+    // const handleLoadAgain = async () => {
 
-    const handleLoadAgain = async () => {
-
-    };
+    // };
 
     if (meeting.summary_status) {
         const [year, month, day] = meeting['uploaded_at'].split('T')[0].split('-');
@@ -42,7 +40,7 @@ const MeetingPage = (props) => {
                     <div className={ styles.meetingSummary }>
                         <Meet meet={ meeting['summarization']['data']['meet'] } />
                     </div>
-                    <button className={ `admin-panel-button user-button ${styles.againButton}` } onClick={ handleLoadAgain }>
+                    {/* <button className={ `admin-panel-button user-button ${styles.againButton}` } onClick={ handleLoadAgain }>
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15.1512 10.9181C14.3002 10.9181 13.5995 11.5217 13.159 12.2219C12.4096 13.4129 11.0497 14.209 9.49639 14.209C7.94313 14.209 6.58322 13.4129 5.83381 12.2219C5.39324 11.5217 4.69258 10.9181 3.84154 10.9181C2.77543 10.9181 1.93128 11.8239 2.31786 12.7794C3.43564 15.542 6.22824 17.5 9.49639 17.5C12.7645 17.5 15.5571 15.542 16.6749 12.7794C17.0615 11.8239 16.2174 10.9181 15.1512 10.9181Z" fill="#282828"/>
                             <path d="M1.56674 9.45087C1.88995 8.5969 2.87185 8.15659 3.75988 8.46741C4.6479 8.77823 5.10577 9.72248 4.78256 10.5764L3.31948 14.4421C2.99626 15.296 2.01436 15.7363 1.12634 15.4255C0.238312 15.1147 -0.219557 14.1704 0.103658 13.3165L1.56674 9.45087Z" fill="#282828"/>
@@ -52,7 +50,7 @@ const MeetingPage = (props) => {
                             <path d="M15.4106 6.4401C16.2986 6.75092 16.7565 7.69516 16.4333 8.54913C16.11 9.4031 15.1281 9.84341 14.2401 9.53259L10.2203 8.12562C9.33232 7.8148 8.87445 6.87056 9.19767 6.01659C9.52088 5.16262 10.5028 4.72232 11.3908 5.03313L15.4106 6.4401Z" fill="#282828"/>
                         </svg>
                         Заново
-                    </button>
+                    </button> */}
                </div>
             </div>
             </>
