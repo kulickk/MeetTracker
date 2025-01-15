@@ -161,7 +161,7 @@ const Users = (props) => {
 
     const handleShowAdminRegistrationForm = (e) => {
         e.preventDefault();
-        const form = document.querySelector(`.${styles.adminRegistrationForm}`);
+        const form = document.querySelector(`.adminRegistrationPanel`);
         form.classList.toggle(styles.hidden);
         form.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     };
@@ -325,7 +325,7 @@ const Users = (props) => {
                 </button>
             </div>
             <div>
-                <form className={ `${styles.adminRegistrationForm} ${styles.hidden}` } >
+                <form className={ `${styles.adminRegistrationForm} ${styles.hidden} adminRegistrationPanel` } >
                     <div className={ styles.adminRegistrationFormLabels }>
                         <label className={ styles.registrationFormLabel } htmlFor="registration-surname">
                             <p className={ styles.registrationFormLabelTitle }>Фамилия</p>

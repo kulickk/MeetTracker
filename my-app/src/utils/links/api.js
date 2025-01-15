@@ -1,4 +1,4 @@
-const dommen = 'http://localhost:8000/';
+const APIDOMMEN = 'http://localhost:8000/';
 
 const api = {
     register: 'auth/register',
@@ -21,7 +21,7 @@ const api = {
 };
 
 Object.keys(api).forEach((key) => {
-    api[key] = dommen + api[key];
+    api[key] = APIDOMMEN + api[key];
 });
 
 export default api;

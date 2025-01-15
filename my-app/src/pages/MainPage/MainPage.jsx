@@ -35,13 +35,13 @@ const MainPage = (props) => {
 
     // Получаем все встречи 
     useEffect(() => {
-        const intervalId = setInterval(getMeets, 10000, setMeetings, navigate);
+        const intervalId = setInterval(getMeets, 10000, setMeetings, navigate, props.userData);
         return () => clearInterval(intervalId);
     });
 
     useEffect(() => {
         if (!meetings) {
-            getMeets(setMeetings, navigate);
+            getMeets(setMeetings, navigate, props.userData);
         }
     });
 
@@ -56,7 +56,7 @@ const MainPage = (props) => {
         const senderButton = e.target;
         if (files) {
             senderButton.disabled = true;
-            sendFile(files[0], senderButton, navigate, setMeetings, messageShownObj, messageInfoObj.title, messageInfoObj.text);
+            sendFile(files[0], senderButton, navigate, setMeetings, messageShownObj, messageInfoObj.title, messageInfoObj.text, props.userData);
         }
     };
 

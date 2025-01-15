@@ -67,34 +67,47 @@ const Meetings = (props) => {
         if (meetings) {
             const formattedMeetings = meetings.map(
                 (value, index) => {
-                    if (meetings[index]) {
-                        const [year, month, day] = meetings[index]['uploaded_at'].split('T')[0].split('-');
-                        const date = [day, month, year].join('.');
-                        if (meetings[index]['summary_status'] === 'DONE') {
-                            return (
-                                <Link to={ routing.mainPage + '/' + index + `/${value['meet_name']}` } key={ index }>
-                                    <div className={ styles.meetingCard }>
+                    if (!meetings[index]['meetingUpload']) {
+                        if (meetings[index]) {
+                            const [year, month, day] = meetings[index]['uploaded_at'].split('T')[0].split('-');
+                            const date = [day, month, year].join('.');
+                            if (meetings[index]['summary_status'] === 'DONE') {
+                                return (
+                                    <Link to={ routing.mainPage + '/' + index + `/${value['meet_name']}` } key={ index }>
+                                        <div className={ styles.meetingCard }>
+                                            <p className={ styles.meetingTitle }>{ meetings[index]['meet_name'] }</p>
+                                            <div className={ styles.meetingDateContainer }>
+                                                <p className={ styles.meetingDate }>{ date }</p>
+                                                { showMeetingStatus('DONE') }
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            }
+                            else {
+                                return (
+                                    <div className={ styles.meetingCard } key={ index }>
                                         <p className={ styles.meetingTitle }>{ meetings[index]['meet_name'] }</p>
                                         <div className={ styles.meetingDateContainer }>
                                             <p className={ styles.meetingDate }>{ date }</p>
-                                            { showMeetingStatus('DONE') }
+                                            { showMeetingStatus(meetings[index]['summary_status']) }
                                         </div>
                                     </div>
-                                </Link>
-                            );
+                                );
+                            }
                         }
-                        else {
-                            return (
-                                <div className={ styles.meetingCard } key={ index }>
-                                    <p className={ styles.meetingTitle }>{ meetings[index]['meet_name'] }</p>
-                                    <div className={ styles.meetingDateContainer }>
-                                        <p className={ styles.meetingDate }>{ date }</p>
-                                        { showMeetingStatus(meetings[index]['summary_status']) }
-                                    </div>
+                    }
+                    else {
+                        return (
+                            <div className={ styles.meetingCard } key={ index }>
+                                <p className={ styles.meetingTitle }>Файл встречи отправляется</p>
+                                <div className={ styles.meetingDateContainer }>
+                                    <p className={ styles.meetingDate }>Пожалуйста, не покидайте страницу и дождитесь отправки</p>
+                                    { showMeetingStatus('PENDING') }
                                 </div>
-                            );
-                        }
-                        }
+                            </div>
+                        );
+                    }
                 }
             )
             return formattedMeetings;

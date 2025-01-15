@@ -10,7 +10,8 @@ import api from '../../../../../utils/links/api.js';
 import styles from './UserProfilePageAccount.module.css';
 
 const showTelegramIcon = (telegram) => {
-    const handleLinkTg = async () => {
+    const handleLinkTg = async (e) => {
+        e.preventDefault();
         try {
             const response = await fetch(api.usersGetTgLink, {
                 credentials: 'include'
@@ -177,7 +178,7 @@ const Account = (props) => {
             <div className={ styles.buttons }>
                 <button name='submitter' className={ `admin-panel-button user-button` } onClick={ handleChangeAccountInfo }>
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9 16C12.866 16 16 12.866 16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16ZM9 13C11.2091 13 13 11.2091 13 9C13 6.79086 11.2091 5 9 5C6.79086 5 5 6.79086 5 9C5 11.2091 6.79086 13 9 13Z" fill="#282828"/>
+                        <path fillRule="evenodd" clipRule="evenodd" d="M9 16C12.866 16 16 12.866 16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16ZM9 13C11.2091 13 13 11.2091 13 9C13 6.79086 11.2091 5 9 5C6.79086 5 5 6.79086 5 9C5 11.2091 6.79086 13 9 13Z" fill="#282828"/>
                         <path d="M7 1C7 0.447715 7.44772 0 8 0H10C10.5523 0 11 0.447715 11 1V3H7V1Z" fill="#282828"/>
                         <path d="M15 11V7H17C17.5523 7 18 7.44772 18 8V10C18 10.5523 17.5523 11 17 11H15Z" fill="#282828"/>
                         <path d="M1 11C0.447715 11 0 10.5523 0 10V8C0 7.44772 0.447715 7 1 7H3V11H1Z" fill="#282828"/>
