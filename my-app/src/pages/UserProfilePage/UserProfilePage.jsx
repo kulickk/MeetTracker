@@ -5,12 +5,14 @@ import api from '../../utils/links/api.js';
 import routing from '../../utils/links/routing.js';
 import Header from '../../components/Header/Header.jsx';
 import ContentSwitcher from './utils/UserProfilePageSwitcher.jsx';
+import Message from '../../components/Message/Message.jsx';
+import { fullLogout } from '../../utils/userData/userData.js';
 
 import styles from './UserProfilePage.module.css'
-import Message from '../../components/Message/Message.jsx';
 
 
 const UserProfilePage = (props) => {
+    console.log(props);
     const [users, setUsers] = useState(undefined);
     const [currentContent, setCurrentContent] = useState('account');
     const [messageTitle, setMessageTitle] = useState('');
@@ -68,6 +70,7 @@ const UserProfilePage = (props) => {
           credentials: 'include'
         }).then((response) => {
             if (!response.ok) {
+                fullLogout(props.userData, {logout: true});
                 navigate(routing.authentidication);
           }
           return response.json();

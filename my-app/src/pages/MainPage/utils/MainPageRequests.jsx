@@ -4,13 +4,13 @@ import api from "../../../utils/links/api.js";
 import routing from "../../../utils/links/routing.js";
 
 
-const getMeets = async (setter, navigate) => {
+const getMeets = async (setter, navigate, userData) => {
     try {
         const response = await fetch(api.usersGetMeets, {
             credentials: 'include',
         });
         if (response.status === 401) {
-            fullLogout();
+            fullLogout(userData, {logout: true});
             navigate(routing.authentidication);
             return;
         }
@@ -22,8 +22,9 @@ const getMeets = async (setter, navigate) => {
 };
 
 
-const sendFile = async (data, senderButton, navigate, setter, shown, title, text) => {
+const sendFile = async (data, senderButton, navigate, setter, shown, title, text, userData) => {
     try {
+        showMessage(shown, title, text, 'Встреча отправляется', 'Не закрывайте страницу');
         const file = new FormData();
         file.append('file', data)
         const response = await fetch(api.usersUploadFile, {
@@ -32,7 +33,7 @@ const sendFile = async (data, senderButton, navigate, setter, shown, title, text
             body: file,
         });
         if (response.status === 401) {
-            fullLogout();
+            fullLogout(userData, {logout: true});
             navigate(routing.authentidication);
             return;
         }
@@ -41,7 +42,7 @@ const sendFile = async (data, senderButton, navigate, setter, shown, title, text
             throw new Error(responseErrorMessage.detail);
         }
         showMessage(shown, title, text, 'Уведомление', 'Встреча загружена');
-        getMeets(setter, navigate)
+        getMeets(setter, navigate, userData)
     } catch (err) {
         showMessage(shown, title, text, 'Ошибка', err.message);
     }
