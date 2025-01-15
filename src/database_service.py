@@ -153,9 +153,10 @@ class DatabaseService:
     async def delete_file_from_db(self, token: str, file_name: str):
         file_id = await self.get_file_id(token, file_name)
         if file_id:
-            query = delete(DB_File).where(DB_File.id == file_id)
-
-            await self.db.execute(query)
+            summary_del_query = delete(DB_Summary).where(DB_Summary.file_id == file_id)
+            file_del_query = delete(DB_File).where(DB_File.id == file_id)
+            await self.db.execute(summary_del_query)
+            await self.db.execute(file_del_query)
             await self.db.commit()
             return {"status_code": 200, "detail": "success"}
         return {"status_code": 400, "detail": "Can't delete the file"}

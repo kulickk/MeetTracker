@@ -1,5 +1,5 @@
 
-const WISPERDOMMEN = 'http://localhost:8000/';
+const WISPERDOMMEN = 'http://localhost:8081/';
 
 const wisper = {
     loadAgain: 'get-summary/'
